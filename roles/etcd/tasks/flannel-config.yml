@@ -1,0 +1,16 @@
+---
+- set_fact:
+    flannel_config_json: "{ \"Network\": \"{{ flannel_network }}\", \"Backend\": { \"Type\": \"vxlan\" } }"
+    flannel_etcd_prefix: "{{ dns_domain }}/network"
+
+- shell: |
+    etcdctl get /{{ dns_domain }}/network/config || true
+  run_once: yes
+  register: etcdctl_result
+  changed_when: false
+
+- name: "config flannel"
+  command: "etcdctl set {{flannel_etcd_prefix}}/config '{{ flannel_config_json|to_nice_json }}'"
+  run_once: yes
+  register: etcdctl_result
+  when: (flannel_config_json|to_nice_json) not in etcdctl_result.stdout

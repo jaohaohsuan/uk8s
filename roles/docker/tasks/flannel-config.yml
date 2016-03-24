@@ -1,0 +1,16 @@
+---
+
+- lineinfile: dest=/etc/init/docker.conf regexp="^start\son\s\(filesystem" line="start on (filesystem and net-device-up IFAC!=lo and started flanneld)" backup=yes
+
+- lineinfile: dest=/etc/init/docker.conf regexp="^stop\son\s\(runlevel" line="stop on (runlevel [!2345] and stopping flanneld)" backup=yes
+
+- lineinfile: 
+    dest: /etc/default/docker 
+    regexp: "^DOCKER_OPTS=.*" 
+    line: 'DOCKER_OPTS="--bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU} --ip-masq=${FLANNEL_IPMASQ} --insecure-registry gcr.io"'
+
+- lineinfile:
+    dest: /etc/default/docker
+    regexp: "/run/flannel/subnet.env"
+    line: ". /run/flannel/subnet.env"
+    insertbefore: "^DOCKER_OPTS=.*"

@@ -1,0 +1,5 @@
+---
+easyrsa_dir: "{{local_download_dir}}/easy-rsa-master/easyrsa3"
+easyrsa: "{{local_download_dir}}/easy-rsa-master/easyrsa3/easyrsa"
+known_tokens: /srv/kubernetes/known_tokens.csv
+accounts: []

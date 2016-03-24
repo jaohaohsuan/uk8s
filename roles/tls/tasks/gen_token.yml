@@ -1,0 +1,43 @@
+---
+
+- set_fact:
+    accounts: [ 'controller-manager', 'scheduler', 'kubectl', 'kubelet', 'kube-proxy' ]
+
+- file: path="{{known_tokens}}" state=touch
+  delegate_to: "{{ groups['masters'][0] }}"
+  run_once: yes
+
+- shell: |
+    account=$(grep {{ item }} {{ known_tokens }} 2>/dev/null)
+    if [ -n "$account" ]
+    then
+      token=`echo $account | awk -F, '{print $1}'`
+      key=`echo $account | awk -F, '{print $2}'`
+      stat=present
+    else
+      token=$(dd if=/dev/urandom bs=128 count=1 2>/dev/null | base64 | tr -d "=+/" | dd bs=32 count=1 2>/dev/null)
+      key="{{ item }}"
+      stat="generated"
+    fi
+    csv="$token,$key,$key"
+    fact="$key: $token"
+    echo '{ "csv": "'"$csv"'", "token": "'"$token"'", "name": "'"$key"'", "stat": "'"$stat"'" }'
+  register: tokens
+  with_items: "{{ accounts }}"
+  name: generate tokens into csv and fact formats
+  delegate_to: "{{ groups['masters'][0] }}"
+#- debug: var=tokens
+- set_fact: 
+    tokens: "{{ tokens.results | map(attribute='stdout')| map('from_json') | list }}"
+  name: "map tokens.results as json"
+
+- lineinfile: >
+    dest="{{known_tokens}}"
+    line="{{ item.csv }}"
+    regexp="{{ item.name }}"
+    create=yes
+  with_items: "{{ tokens }}"
+  delegate_facts: true
+  delegate_to: "{{ groups['masters'][0] }}"
+
+#- debug: msg="{% for user in tokens if user.name == 'kubectl' %}{{ user.token }}{% endfor %}"

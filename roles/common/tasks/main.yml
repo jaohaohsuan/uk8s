@@ -1,0 +1,16 @@
+---
+
+- local_action: file path=downloads state=directory
+  run_once: yes
+  become: no
+
+- local_action: shell pwd
+  register: current_pwd
+  changed_when: false
+  become: no
+
+- set_fact:
+    local_download_dir: "{{current_pwd.stdout}}/downloads"
+    private_host_ipv4: "{{ hostvars[inventory_hostname]['ansible_' + private_network_iface]['ipv4']['address'] }}"
+
+#- debug: msg="{% set my_string = 'ansible_' + private_network_iface %}{{my_string.ipv4.address}}"

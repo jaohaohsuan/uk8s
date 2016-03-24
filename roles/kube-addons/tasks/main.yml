@@ -1,0 +1,25 @@
+---
+- file: path={{kube_addons_dir}} state=directory mode=0644
+
+- copy: src=namespace.yml dest=/srv/kubernetes/namespace.yml
+
+- command: kubectl get ns -o=name
+  register: kube_system_exists
+  changed_when: false
+
+- command: "kubectl create -f namespace.yml"
+  args:
+    chdir: "/srv/kubernetes"
+  when: kube_system_exists.stdout.find('kube-system') == -1
+
+- command: kubectl get no {{item}}
+  register: nodes_stat
+  with_items: "{{groups.nodes}}"
+
+- debug: "var={{item}}"
+  with_items: "{{nodes_stat.results | map(attribute='stdout') | list}}"
+  failed_when: "'Ready' not in item"
+
+- include: dns.yml
+
+- include: dashboard.yml

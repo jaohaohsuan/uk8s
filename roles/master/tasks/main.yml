@@ -1,0 +1,29 @@
+---
+- copy: >
+    src="{{ kube_binaries_dir }}/{{ item }}"
+    dest="/usr/bin/{{ item }}"
+    mode=0744
+  with_items:
+    - "kube-apiserver"
+    - "kube-controller-manager"
+    - "kube-scheduler"
+    - "kube-proxy"
+    - "kubectl"
+
+- copy: src="{{easyrsa_dir}}/pki/issued/kube-master.crt" dest=/srv/kubernetes/server.crt mode=0644
+
+- copy: src="{{easyrsa_dir}}/pki/private/kube-master.key" dest=/srv/kubernetes/server.key mode=0600
+
+- lineinfile: dest=/srv/kubernetes/known_basic_auth.csv regexp=admin,admin line="admin,admin,admin" create=yes
+
+- copy: src="{{item}}.conf" dest="/etc/init/{{item}}.conf"
+  with_items:
+    - "kube-apiserver"
+    - "kube-controller-manager"
+    - "kube-scheduler"
+
+- template: src="{{item}}.j2" dest="/etc/default/{{item}}"
+  with_items:
+    - "kube-apiserver"
+    - "kube-controller-manager"
+    - "kube-scheduler"

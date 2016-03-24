@@ -1,0 +1,36 @@
+---
+
+- name: "download flannel github release tag {{ flannel_version }}"
+  local_action:
+    get_url
+      url="https://github.com/coreos/flannel/releases/download/v{{ flannel_version }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
+      dest="downloads/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
+  become: no
+  run_once: true
+
+- local_action:
+    unarchive
+      src="{{local_download_dir}}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
+      dest="{{local_download_dir}}/"
+      copy=no
+      creates="{{local_download_dir}}/flannel-{{ flannel_version }}/flanneld"
+  become: no
+  run_once: true
+
+- name: "copy binaries to /usr/bin"
+  copy:
+    src: downloads/flannel-{{ flannel_version }}/{{ item }}
+    dest: /usr/bin/{{ item }}
+    mode: "0754"
+  with_items:
+    - flanneld
+
+- copy: src=flanneld.conf dest=/etc/init
+  name: copy to upstart script
+  # notify:
+  #   - service restart flanneld
+
+- template: src=flanneld.j2 dest=/etc/default/flanneld
+  name: config
+
+- service: name=flanneld state=started

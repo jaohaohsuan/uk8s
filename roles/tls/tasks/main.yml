@@ -1,0 +1,30 @@
+---
+
+- file: path=/srv/kubernetes state=directory
+
+- set_fact:
+    certs_dir: "{{easyrsa_dir}}/pki"
+
+- include: gen_token.yml
+  name: generate tokens
+  delegate_to: "{{ groups['masters'][0] }}"
+  run_once: yes
+
+- local_action: stat path="{{certs_dir}}"
+  register: pki_dir
+  become: no
+
+- name: generate certs
+  include: gen_certs.yml
+  delegate_to: "{{ groups['masters'][0] }}"
+  run_once: yes
+  become: no
+  when: pki_dir.stat.exists == false
+
+- copy: src="{{easyrsa_dir}}/pki/ca.crt" dest=/srv/kubernetes/ca.crt mode=0644
+
+# - lineinfile: dest="{{known_basic_auth}}" regexp=admin,admin line="admin,admin,admin" create=yes
+#   delegate_to: "{{ groups['masters'][0] }}"
+
+# - include: gen_node_crt.yml
+#   when: inventory_hostname == groups['masters'][0]

@@ -1,0 +1,43 @@
+---
+
+- file: path="{{ kube_addons_dir }}/dns" state=directory mode=0644
+
+- set_fact:
+    dns_replicas: 1
+
+- local_action:
+    stat path="downloads/kubernetes/cluster/addons/dns"
+  register: dns_addons_dir
+  become: no
+
+- name: DNS | Convert pillar vars to ansible vars for skydns-rc.yaml
+  local_action: replace
+    dest="{{ dns_addons_dir.stat.path }}/{{ item }}.in"
+    regexp="pillar\[\'(\w*)\'\]"
+    replace="\1"
+  become: no
+  with_items:
+    - "skydns-rc.yaml"
+    - "skydns-svc.yaml"
+  when: dns_addons_dir.stat.exists
+
+- template:
+    src: "{{ dns_addons_dir.stat.path }}/{{ item }}.in"
+    dest: "{{ kube_addons_dir }}/dns/{{ item }}"
+    force: no
+  with_items:
+    - "skydns-rc.yaml"
+    - "skydns-svc.yaml"
+  when: dns_addons_dir.stat.exists
+
+- command: kubectl cluster-info
+  register: kube_dns_exists
+  changed_when: false
+
+- command: "kubectl create -f {{item}}"
+  args:
+    chdir: "{{ kube_addons_dir }}/dns"
+  with_items:
+    - "skydns-svc.yaml"
+    - "skydns-rc.yaml"
+  when: kube_dns_exists.stdout.find('KubeDNS') == -1

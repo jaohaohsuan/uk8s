@@ -1,0 +1,5 @@
+---
+
+- name: service restart etcd
+  service: name=flanneld state=restarted
+#  when: etcd_started.changed == false

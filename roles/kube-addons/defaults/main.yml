@@ -1,0 +1,2 @@
+---
+kube_addons_dir: "/srv/kubernetes/addons"

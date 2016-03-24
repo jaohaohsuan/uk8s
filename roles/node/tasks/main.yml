@@ -1,0 +1,33 @@
+---
+
+- set_fact:
+    kubelet_token: L1T5EqbWkSHywBDO4FthOBM9aq6w6xkM
+    kube_proxy_token: xZTNhsXnyWm1ydzbiQsvW142p7zYhbrV
+
+- file: path="/var/lib/{{item}}" state=directory
+  with_items:
+    - "kube-proxy"
+    - "kubelet"
+
+- template: src="{{item}}.kubeconfig.j2" dest="/var/lib/{{item}}/kubeconfig"
+  with_items:
+    - "kubelet"
+    - "kube-proxy"
+
+- copy: >
+    src="{{ kube_binaries_dir }}/{{ item }}"
+    dest="/usr/bin/{{ item }}"
+    mode=0744
+  with_items:
+    - "kube-proxy"
+    - "kubelet"
+
+- copy: src="{{item}}.conf" dest="/etc/init/{{item}}.conf"
+  with_items:
+    - "kubelet"
+    - "kube-proxy"
+
+- template: src="{{item}}.j2" dest="/etc/default/{{item}}"
+  with_items:
+    - "kubelet"
+    - "kube-proxy"

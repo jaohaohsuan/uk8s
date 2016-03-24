@@ -1,0 +1,6 @@
+
+---
+
+- include: github-release.yml
+  become: no
+  run_onece: true

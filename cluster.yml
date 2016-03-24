@@ -1,0 +1,41 @@
+---
+- hosts: masters
+  become: yes
+  roles:
+    - etcd
+  tags:
+    - etcd
+
+- hosts:
+    - nodes
+    - masters
+  become: yes
+  roles:
+    - flannel
+  tags:
+    - nodes
+
+- hosts: masters
+  become: yes
+  roles:
+    - master
+  tags:
+    - masters
+    - k8s
+
+- hosts: nodes
+  become: yes
+  roles:
+    - node
+  tags:
+    - join
+    - k8s
+- hosts: masters
+  become: yes
+  roles:
+    - "kube-addons"
+  tags:
+    - k8s
+    - addons
+
+# vim:ft=ansible:

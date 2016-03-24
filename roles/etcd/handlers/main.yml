@@ -1,0 +1,5 @@
+---
+
+- name: service restart etcd
+  service: name=etcd state=restarted
+#  when: etcd_started.changed == false

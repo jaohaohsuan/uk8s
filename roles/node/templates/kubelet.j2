@@ -1,0 +1,5 @@
+KUBELET_OPTS="--api-servers={{ kube_apiserver }}
+  --cluster-domain={{ dns_domain }}
+  --allow-privileged=true
+  --cluster-dns={{ dns_server }}
+  --kubeconfig=/var/lib/kubelet/kubeconfig"

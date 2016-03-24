@@ -1,0 +1,42 @@
+---
+
+- name: "download etcd github release tag {{ etcd_version }}"
+  local_action:
+    get_url
+      url="https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+      dest="downloads/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+  become: no
+  run_once: true
+
+- local_action:
+    unarchive
+      src="{{local_download_dir}}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+      dest="{{local_download_dir}}/"
+      creates="{{local_download_dir}}/etcd-{{ etcd_version }}-linux-amd64/etcd"
+      copy=no
+  become: no
+  run_once: true
+
+- name: "copy binaries to /usr/bin"
+  copy:
+    src: downloads/etcd-{{ etcd_version }}-linux-amd64/{{ item }}
+    dest: /usr/bin/{{ item }}
+    mode: "0754"
+  with_items:
+    - etcd
+    - etcdctl
+
+- file: path=/var/etcd state=directory
+  name: mkdir data dir on /var/path
+
+- copy: src=etcd.conf dest=/etc/init
+  name: copy to upstart script
+  notify:
+    - service restart etcd
+
+- template: src=etcd.j2 dest=/etc/default/etcd
+  name: config
+
+- service: name=etcd state=started
+
+- include: "flannel-config.yml"

@@ -1,0 +1,20 @@
+---
+
+- file: path="{{ kube_addons_dir }}/dashboard" state=directory mode=0644
+
+- copy: src="{{local_download_dir}}/kubernetes/cluster/addons/dashboard/{{item}}" dest="{{ kube_addons_dir }}/dashboard"
+  with_items:
+    - "dashboard-service.yaml"
+    - "dashboard-controller.yaml"
+
+- shell: "kubectl --namespace=kube-system get po | grep kubernetes-dashboard || true"
+  register: kube_dashboard_exists
+  changed_when: false
+
+- command: "kubectl create -f {{item}}"
+  args:
+    chdir: "{{ kube_addons_dir }}/dashboard"
+  with_items:
+    - "dashboard-service.yaml"
+    - "dashboard-controller.yaml"
+  when: kube_dashboard_exists.stdout == ""

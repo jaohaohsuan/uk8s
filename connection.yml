@@ -1,0 +1,29 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    #ifac: ansible_eth1
+  tasks:
+    - name: "build host file."
+      lineinfile:
+        dest=/etc/hosts
+        regexp="^(?!127\.0\.1\.1).*({{ item }}){1,2}$"
+        line="{{ hostvars[item]['ansible_' + private_network_iface]['ipv4']['address'] }} {{ item }} {{ item }}"
+        state=present
+      when: "{{hostvars[item]['ansible_' + private_network_iface].ipv4.address is defined}}"
+      with_items: "{{groups['all']}}"
+
+#    - debug: var=private_network_iface
+#    - name: "remove hostname from localhost."
+#      replace:
+#        dest=/etc/hosts
+#        regexp="{{ item }} localhost?"
+#        replace="localhost"
+#      when: hostvars[item]['ansible_' + private_network_iface].ipv4.address is defined
+#      with_items: groups['all']
+#    - name: "remove ansible_default_ipv4 address hostname"
+#      replace:
+#        dest=/etc/hosts
+#        regexp=".*{{ hostvars[item].ansible_default_ipv4.address }}.*{{ item }}"
+#      with_items: groups['all']
+# vim:ft=ansible:
