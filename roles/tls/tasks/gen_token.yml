@@ -1,11 +1,7 @@
 ---
 
-- set_fact:
-    accounts: [ 'controller-manager', 'scheduler', 'kubectl', 'kubelet', 'kube-proxy' ]
+- command: touch {{known_tokens}} creates="{{known_tokens}}"
 
-- file: path="{{known_tokens}}" state=touch
-  delegate_to: "{{ groups['masters'][0] }}"
-  run_once: yes
 
 - shell: |
     account=$(grep {{ item }} {{ known_tokens }} 2>/dev/null)
@@ -24,10 +20,12 @@
     echo '{ "csv": "'"$csv"'", "token": "'"$token"'", "name": "'"$key"'", "stat": "'"$stat"'" }'
   register: tokens
   with_items: "{{ accounts }}"
+  changed_when: tokens.stdout.find('generated') != -1
   name: generate tokens into csv and fact formats
-  delegate_to: "{{ groups['masters'][0] }}"
+
 #- debug: var=tokens
-- set_fact: 
+
+- set_fact:
     tokens: "{{ tokens.results | map(attribute='stdout')| map('from_json') | list }}"
   name: "map tokens.results as json"
 
@@ -37,7 +35,5 @@
     regexp="{{ item.name }}"
     create=yes
   with_items: "{{ tokens }}"
-  delegate_facts: true
-  delegate_to: "{{ groups['masters'][0] }}"
-
-#- debug: msg="{% for user in tokens if user.name == 'kubectl' %}{{ user.token }}{% endfor %}"
+#  delegate_facts: true
+#  delegate_to: "{{ groups['masters'][0] }}"

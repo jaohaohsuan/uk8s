@@ -1,5 +1,10 @@
 ---
+certs_dir: "{{easyrsa_dir}}/pki"
+
+req_cn: "{{private_host_ipv4}}@{{lookup('pipe', 'date +%s')}}"
+sans: "IP:{{private_host_ipv4}},IP:{{kube_service_ip}},DNS:kubernetes,DNS:kubernetes.default,DNS:kubernetes.default.svc,DNS:kubernetes.default.svc.{{ dns_domain}},DNS:{{ inventory_hostname }}"
+
 easyrsa_dir: "{{local_download_dir}}/easy-rsa-master/easyrsa3"
 easyrsa: "{{local_download_dir}}/easy-rsa-master/easyrsa3/easyrsa"
-known_tokens: /srv/kubernetes/known_tokens.csv
-accounts: []
+
+accounts: [ 'controller-manager', 'scheduler', 'kubectl', 'kubelet', 'kube-proxy' ]
