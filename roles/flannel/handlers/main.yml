@@ -1,5 +1,10 @@
 ---
 
-- name: service restart etcd
+- name: service restart flanneld
   service: name=flanneld state=restarted
-#  when: etcd_started.changed == false
+  when: flanneld_started.changed == false
+  register: flanneld_started
+
+- service: name=docker state=restarted
+  name: service restart docker
+  when: flanneld_started.changed

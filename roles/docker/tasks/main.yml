@@ -1,11 +1,11 @@
 ---
 
-- name: check apt last update
-  stat: path=/var/cache/apt
-  register: apt_cache_stat
-- name: update apt if needed
-  apt: update_cache=yes
-  when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
+# - name: check apt last update
+#   stat: path=/var/cache/apt
+#   register: apt_cache_stat
+# - name: update apt if needed
+#   apt: update_cache=yes
+#   when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
 
 - include: "cgroup-enable.yml"
   name: enable cgroup
@@ -15,17 +15,14 @@
   changed_when: false
   name: gather kernel
 
-- set_fact:
-    linux_image_extra: "linux-image-extra-{{kernel.stdout}}"
-
 - debug: msg="kernel {{kernel.stdout}}"
 
-- apt: "name={{ item }} state=present"
+- apt: name={{item}} state=present update_cache=yes cache_valid_time=86400
   with_items:
     - "apt-transport-https"
     - "ca-certificates"
     - "bridge-utils"
-    - "{{linux_image_extra}}"
+    - "linux-image-extra-{{kernel.stdout}}"
     - "apparmor"
   name: install packages
 
@@ -35,19 +32,13 @@
     state: present
   name: add the new GPG key
 
-- apt_repository:
-    repo: "deb https://apt.dockerproject.org/repo ubuntu-trusty main"
+- apt_repository: repo="deb https://apt.dockerproject.org/repo ubuntu-trusty main"
   name: add docker repository entry
-
-# - apt: update_cache=yes
-#   name: update the APT package index
 
 - apt: name=lxc-docker purge=yes state=absent
   name: purge the old repo if it exists
 
-- apt: name=docker-engine state=present
+- apt: name=docker-engine state=present update_cache=yes cache_valid_time=86400
   name: install docker-engine
 
 - include: "flannel-config.yml"
-
-

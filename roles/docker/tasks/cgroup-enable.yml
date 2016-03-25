@@ -1,6 +1,6 @@
 ---
-- apt: name=linux-generic-lts-vivid state=present
-  name: install newer kernel
+# - apt: name=linux-generic-lts-vivid state=present update_cache=yes cache_valid_time=86400
+#   name: install newer kernel
 
 - lineinfile: dest=/etc/default/grub state=present line="GRUB_CMDLINE_LINUX=\"cgroup_enable=memory swapaccount=1\"" regexp="cgroup_enable"
   register: edit_grub

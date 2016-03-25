@@ -27,10 +27,17 @@
 
 - copy: src=flanneld.conf dest=/etc/init
   name: copy to upstart script
-  # notify:
-  #   - service restart flanneld
+  notify:
+    - service restart flanneld
+    - service restart docker
 
 - template: src=flanneld.j2 dest=/etc/default/flanneld
   name: config
 
 - service: name=flanneld state=started
+  register: flanneld_started
+
+- service: name=docker state=restarted
+  when: flanneld_started.changed
+
+- debug: var=flanneld_started
