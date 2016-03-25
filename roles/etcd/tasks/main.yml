@@ -21,7 +21,7 @@
   copy:
     src: downloads/etcd-{{ etcd_version }}-linux-amd64/{{ item }}
     dest: /usr/bin/{{ item }}
-    mode: "0754"
+    mode: "0744"
   with_items:
     - etcd
     - etcdctl
@@ -34,9 +34,10 @@
   notify:
     - service restart etcd
 
-- template: src=etcd.j2 dest=/etc/default/etcd
+- template: src=etcd.j2 dest=/etc/init/etcd.override
   name: config
 
 - service: name=etcd state=started
 
 - include: "flannel-config.yml"
+  run_once: yes
