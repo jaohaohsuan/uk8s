@@ -2,13 +2,12 @@
 
 - set_fact:
     flannel_config: "{{ lookup('template', 'config.json.j2')}}"
-    flannel_network: "/{{ dns_domain }}/network/config"
 
-- command: "etcdctl get {{flannel_network}}"
+- command: "etcdctl get /{{dns_domain}}/network/config"
   register: result
   changed_when: result.rc != 0
   ignore_errors: true
 
 - name: "config flannel"
-  command: "etcdctl set {{flannel_network}} {{flannel_config}}"
+  command: "etcdctl set /{{dns_domain}}/network/config {{flannel_config}}"
   when: '{{flannel_config}} not in result.stdout|default("")'
