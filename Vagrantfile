@@ -40,7 +40,7 @@ Vagrant.configure(2) do |config|
       n.vm.hostname = name
       n.vm.network "private_network", ip: "10.168.10.#{10+i}", :netmask => "255.255.255.0"
       n.vm.provider :virtualbox do |vb, override|
-        set_vbox(vb, override, 4096)
+        set_vbox(vb, override, 1024)
       end
     end
   end
@@ -73,7 +73,7 @@ Vagrant.configure(2) do |config|
     n.vm.hostname = "kube-master"
     n.vm.network "private_network", ip: "10.168.10.80", :netmask => "255.255.255.0"
     n.vm.provider :virtualbox do |vb, override|
-      set_vbox(vb, override, 2048)
+      set_vbox(vb, override, 1024)
     end
 
     n.vm.provision :ansible do |ansible|

@@ -14,4 +14,11 @@
     private_host_ipv4: "{{ hostvars[inventory_hostname]['ansible_' + private_network_iface]['ipv4']['address'] }}"
     known_tokens: /srv/kubernetes/known_tokens.csv
 
+- set_fact:
+    easyrsa_dir: "{{local_download_dir}}/easy-rsa-master/easyrsa3"
+    easyrsa: "{{local_download_dir}}/easy-rsa-master/easyrsa3/easyrsa"
+
+- set_fact:
+    certs_dir: "{{easyrsa_dir}}/pki"
+
 #- debug: msg="{% set my_string = 'ansible_' + private_network_iface %}{{my_string.ipv4.address}}"

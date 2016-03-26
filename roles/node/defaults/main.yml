@@ -1,0 +1,4 @@
+---
+binaries: ['kubelet','kube-proxy','kubectl']
+services: ['kubelet','kube-proxy']
+known_tokens: /srv/kubernetes/known_tokens.csv

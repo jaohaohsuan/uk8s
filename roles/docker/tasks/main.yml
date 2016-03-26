@@ -6,7 +6,6 @@
 # - name: update apt if needed
 #   apt: update_cache=yes
 #   when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
-
 - include: "cgroup-enable.yml"
   name: enable cgroup
 
@@ -17,7 +16,7 @@
 
 - debug: msg="kernel {{kernel.stdout}}"
 
-- apt: name={{item}} state=present update_cache=yes cache_valid_time=86400
+- apt: name={{item}} state=present update_cache=yes
   with_items:
     - "apt-transport-https"
     - "ca-certificates"
@@ -38,7 +37,7 @@
 - apt: name=lxc-docker purge=yes state=absent
   name: purge the old repo if it exists
 
-- apt: name=docker-engine state=present update_cache=yes cache_valid_time=86400
+- apt: name=docker-engine state=present update_cache=yes
   name: install docker-engine
 
 - include: "flannel-config.yml"

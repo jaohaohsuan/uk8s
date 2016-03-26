@@ -1,6 +1,8 @@
 
 ---
 
+- file: path=/srv/kubernetes state=directory
+
 - include: github-release.yml
   become: no
   run_onece: true

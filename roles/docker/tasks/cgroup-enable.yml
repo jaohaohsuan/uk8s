@@ -1,6 +1,6 @@
 ---
-# - apt: name=linux-generic-lts-vivid state=present update_cache=yes cache_valid_time=86400
-#   name: install newer kernel
+- apt: name=linux-generic-lts-vivid state=present update_cache=yes
+  name: install newer kernel
 
 - lineinfile: dest=/etc/default/grub state=present line="GRUB_CMDLINE_LINUX=\"cgroup_enable=memory swapaccount=1\"" regexp="cgroup_enable"
   register: edit_grub
@@ -11,8 +11,8 @@
   name: "update-grub"
 
 - name: restart machine
-  command: sleep 2 && shutdown -r now "Ansible updates triggered"
-  async: 1
+  command: shutdown -r now
+  async: 0
   poll: 0
   ignore_errors: true
   when: edit_grub.changed

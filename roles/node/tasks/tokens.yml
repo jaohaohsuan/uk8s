@@ -1,0 +1,22 @@
+---
+
+- shell: |
+    if [ {{known_tokens}} ]; then
+      while read -r line || [[ -n "$line" ]]; do
+        if [ {{item}} = `echo $line | awk -F, '{print $2}'` ]; then
+          token=`echo $line | awk -F, '{print $1}'`
+          echo '{ "token": "'"$token"'", "name": "{{item}}" }'
+        else
+          continue;
+        fi
+      done < {{known_tokens}}
+      echo "";
+    fi
+  register: tokens
+  with_items: "{{binaries}}"
+  delegate_to: "{{ groups['masters'][0] }}"
+
+- debug: var=tokens
+
+- set_fact: 
+    tokens: "{{ tokens.results | map(attribute='stdout')| map('from_json') | list }}"

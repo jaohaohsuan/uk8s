@@ -1,7 +1,7 @@
 ---
 
 - set_fact:
-    flannel_config: "{{ lookup('template', 'config.json.j2')}}"
+    flannel_config: "{{lookup('template', 'config.json.j2')}}"
 
 - command: "etcdctl get /{{dns_domain}}/network/config"
   register: result
