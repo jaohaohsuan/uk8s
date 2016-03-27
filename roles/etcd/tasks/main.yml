@@ -39,5 +39,7 @@
 
 - service: name=etcd state=started
 
+- wait_for: host="{{private_host_ipv4}}" port=2379 delay=3
+
 - include: "flannel-config.yml"
   run_once: yes

@@ -16,7 +16,7 @@
 
 - debug: msg="kernel {{kernel.stdout}}"
 
-- apt: name={{item}} state=present update_cache=yes
+- apt: name={{item}} state=present update_cache=yes cache_valid_time=43200
   with_items:
     - "apt-transport-https"
     - "ca-certificates"
@@ -34,10 +34,10 @@
 - apt_repository: repo="deb https://apt.dockerproject.org/repo ubuntu-trusty main"
   name: add docker repository entry
 
-- apt: name=lxc-docker purge=yes state=absent
+- apt: name=lxc-docker purge=yes state=absent 
   name: purge the old repo if it exists
 
-- apt: name=docker-engine state=present update_cache=yes
+- apt: name=docker-engine state=present update_cache=yes cache_valid_time=43200
   name: install docker-engine
 
 - include: "flannel-config.yml"

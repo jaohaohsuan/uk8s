@@ -10,7 +10,7 @@
         regexp="^(?!127\.0\.1\.1).*({{ item }}){1,2}$"
         line="{{ hostvars[item]['ansible_' + private_network_iface]['ipv4']['address'] }} {{ item }} {{ item }}"
         state=present
-      when: "{{hostvars[item]['ansible_' + private_network_iface].ipv4.address is defined}}"
+      when: "private_network_iface in hostvars[item].ansible_interfaces"
       with_items: "{{groups['all']}}"
 
 #    - debug: var=private_network_iface
