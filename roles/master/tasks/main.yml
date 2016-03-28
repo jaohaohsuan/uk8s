@@ -22,3 +22,36 @@
 
 - service: name="{{item}}" state=started
   with_items: "{{services}}"
+
+- set_fact:
+    kubectl_exist: "{{lookup('pipe','test -f /usr/local/bin/kubectl && echo true || echo false')}}"
+
+- local_action:
+    shell
+      curl -o /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/{{kube_relase_ver}}/bin/darwin/amd64/kubectl";
+      chmod +x /usr/local/bin/kubectl;
+  when: (not kubectl_exist) and (control_machine_distribution == 'Darwin')
+  become: no
+  run_once: yes
+  name: install kubectl(Darwin) to control machine
+
+- local_action:
+    copy src="{{ kube_binaries_dir }}/kubelet" dest=/usr/local/bin/kubectl mode=0774
+  when: (not kubectl_exist) and (control_machine_distribution != 'Darwin')
+  name: install kubectl(amd) to control machine
+
+- local_action:
+    template
+      src=kubectl.kubeconfig.j2
+      dest="~/.kube/config"
+  become: no
+
+# - local_action:
+#     shell
+#       kubectl config set-cluster default-cluster --server={{kube_apiserver}} --certificate-authority={{certs_dir}}/ca.crt;
+#       kubectl config set-credentials default-admin --certificate-authority={{certs_dir}}/ca.crt --client-key={{certs_dir}}/private/kubecfg.key --client-certificate={{certs_dir}}/issued/kubecfg.crt;
+#       kubectl config set-context default-system --cluster=default-cluster --user=default-admin;
+#       kubectl config use-context default-system;
+#   name: "set host admin kubectl"
+#   changed_when: false
+#   become: no
