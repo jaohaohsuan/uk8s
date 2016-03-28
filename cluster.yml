@@ -38,4 +38,11 @@
     - k8s
     - addons
 
+- hosts: glusters
+  become: yes
+  roles:
+    - gluster
+  tags:
+    - pv
+
 # vim:ft=ansible:

@@ -1,0 +1,23 @@
+---
+- apt: name={{item}} state=present update_cache=yes cache_valid_time=43200
+  with_items:
+    - "software-properties-common"
+
+- apt_repository: repo='ppa:gluster/glusterfs-3.6'
+
+- apt: name={{item}} state=present update_cache=yes cache_valid_time=43200
+  with_items:
+    - "glusterfs-server"
+
+- service: name=glusterfs-server state=started enabled=yes
+
+- command: gluster peer probe {{ item }}
+  with_items: "{{groups['glusters']}}"
+  when: item != inventory_hostname
+  register: probe_result
+  until: "{{ probe_result.stdout.find(\"peer probe: success\") != -1 }}"
+  retries: 3
+  delay: 5
+  changed_when: probe_result.stdout.find('already in peer list') == -1
+  name: "configure the trusted pool"
+  run_once: true  
