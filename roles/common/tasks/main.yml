@@ -13,6 +13,7 @@
     local_download_dir: "{{current_pwd.stdout}}/downloads"
     private_host_ipv4: "{{ hostvars[inventory_hostname]['ansible_' + private_network_iface]['ipv4']['address'] }}"
     known_tokens: /srv/kubernetes/known_tokens.csv
+    control_machine_distribution: "{{lookup('pipe', 'uname -s')}}"
 
 - set_fact:
     easyrsa_dir: "{{local_download_dir}}/easy-rsa-master/easyrsa3"
