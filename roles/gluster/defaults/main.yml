@@ -1,0 +1,8 @@
+---
+# Gluster confuguration
+gluster_mnt_dir: /mnt/gvol
+gluster_brk_dir: /data/gluster/brick
+gluster_vlm_name: gvol
+
+
+# vim:ft=ansible:

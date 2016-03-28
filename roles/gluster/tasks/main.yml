@@ -1,23 +1,35 @@
 ---
-- apt: name={{item}} state=present update_cache=yes cache_valid_time=43200
-  with_items:
-    - "software-properties-common"
 
-- apt_repository: repo='ppa:gluster/glusterfs-3.6'
+- name: "Copy GlusterFS package to remote machines"
+  copy: src=files dest=/tmp/ mode=0744
 
-- apt: name={{item}} state=present update_cache=yes cache_valid_time=43200
-  with_items:
-    - "glusterfs-server"
+- name: "Install all GlusterFS packages"
+  shell: dpkg -i * chdir=/tmp/files
 
 - service: name=glusterfs-server state=started enabled=yes
 
-- command: gluster peer probe {{ item }}
-  with_items: "{{groups['glusters']}}"
-  when: item != inventory_hostname
-  register: probe_result
-  until: "{{ probe_result.stdout.find(\"peer probe: success\") != -1 }}"
-  retries: 3
-  delay: 5
-  changed_when: probe_result.stdout.find('already in peer list') == -1
-  name: "configure the trusted pool"
-  run_once: true  
+- name: "Create mount folder and brick"
+  file: "path={{ item }} state=directory mode=0775"
+  with_items:
+    - "{{ gluster_mnt_dir }}"
+    - "{{ gluster_brk_dir }}"
+
+- name: Configure Gluster volume.
+  gluster_volume:
+    state: present
+    name: "{{ gluster_vlm_name }}"
+    brick: "{{ gluster_brk_dir }}"
+    replicas: 2
+    cluster: "{{ groups.glusters | join(',') }}"
+    host: "{{ inventory_hostname }}"
+    force: yes
+  run_once: true
+
+
+#- name: Ensure Gluster volume is mounted.
+#  mount:
+#    name: "{{ gluster_mnt_dir }}"
+#    src: "{{ inventory_hostname }}:/{{ gluster_vlm_name }}"
+#    fstype: glusterfs
+#    opts: "defaults,_netdev"
+#    state: mounted
