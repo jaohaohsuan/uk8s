@@ -1,0 +1,9 @@
+- apt: name={{item}} state=present update_cache=yes cache_valid_time=43200
+  with_items:
+    - "software-properties-common"
+ 
+- apt_repository: repo='ppa:gluster/glusterfs-3.6'
+
+- apt: name={{item}} state=present update_cache=yes cache_valid_time=43200
+  with_items:
+    - "glusterfs-client"

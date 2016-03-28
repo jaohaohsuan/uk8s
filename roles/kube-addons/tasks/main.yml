@@ -22,4 +22,4 @@
 
 - include: dns.yml
 
-- include: dashboard.yml
+# - include: dashboard.yml

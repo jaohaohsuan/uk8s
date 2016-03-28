@@ -1,4 +1,5 @@
 KUBE_APISERVER_OPTS="--etcd-servers={{etcd_endpoints}} 
+  --allow-privileged=true
   --service-cluster-ip-range={{ service_cluster_ip_range }}
   --tls-cert-file=/srv/kubernetes/server.crt
   --tls-private-key-file=/srv/kubernetes/server.key 

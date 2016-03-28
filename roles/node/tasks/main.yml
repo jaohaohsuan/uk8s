@@ -1,5 +1,7 @@
 ---
 
+- include: gluster-client.yml
+
 - copy: src="{{easyrsa_dir}}/pki/ca.crt" dest=/srv/kubernetes/ca.crt mode=0644
 
 - include: tokens.yml
