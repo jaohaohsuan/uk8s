@@ -11,8 +11,18 @@
 - name: Create mount folder and brick
   file: "path={{ gluster_volume_name }} state=directory mode=0775"
   delegate_to: "{{ item }}"
+  run_once: yes
   with_items:
     - "{{ groups.glusters }}"
+  when: gluster_volume_name is defined
+
+- name: Check gluster volume '{{ gluster_volume_name }}'
+  command: gluster volume info
+  register: vol_info
+  become: yes
+  run_once: yes
+  changed_when: false
+  delegate_to: "{{ groups.glusters[0] }}"
   when: gluster_volume_name is defined
 
 - name: Create '{{ gluster_volume_name }}' volume
@@ -25,8 +35,6 @@
     force: yes
   run_once: yes
   become: yes
-  delegate_to: "{{ item }}"
-  with_items:
-    - "{{ groups.glusters }}"
-  when: gluster_volume_name is defined
+  delegate_to: "{{ groups.glusters[0] }}"
+  when: gluster_volume_name is defined and vol_info.stdout.find("{{ gluster_volume_name }}") != -1
 
