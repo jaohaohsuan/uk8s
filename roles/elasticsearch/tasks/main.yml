@@ -1,0 +1,55 @@
+---
+
+- file: path=/github/elasticsearch-cluster state=directory
+- git: repo=https://github.com/jaohaohsuan/kubernetes-elasticsearch-cluster.git
+       dest=/github/elasticsearch-cluster
+
+- file: path=/srv/kubernetes/manifest state=directory
+
+- template: 
+    src: "gluster-endpoints.yml.j2"
+    dest: "/srv/kubernetes/manifest/glusterfs-cluster-endpoints.yml"
+
+- copy: src="glusterfs-cluster-svc.yml" dest="/srv/kubernetes/manifest/glusterfs-cluster-svc.yml"
+
+- command: "kubectl apply -f {{item}}.yml"
+  args:
+    chdir: "/srv/kubernetes/manifest"
+  with_items:
+    - "glusterfs-cluster-endpoints"
+    - "glusterfs-cluster-svc"
+
+      
+- command: "kubectl apply -f {{item}}"
+  args:
+    chdir: /github/elasticsearch-cluster
+  with_items:
+    - "service-account.yaml"
+    - "es-discovery-svc.yaml"
+    - "es-svc.yaml"
+    - "es-master-rc.yaml"
+  changed_when: false
+
+- shell: |
+    kubectl get po | grep es-master
+  register: result
+  until: "'Running' in result.stdout"
+  changed_when: false
+  retries: 10
+  delay: 30
+
+- command: kubectl apply -f es-client-rc.yaml
+  args:
+    chdir: /github/elasticsearch-cluster
+
+- shell: |
+    kubectl get po | grep es-client
+  register: result
+  until: "'Running' in result.stdout"
+  changed_when: false
+  retries: 10
+  delay: 30
+
+- command: kubectl apply -f es-data-rc.yaml
+  args:
+    chdir: /github/elasticsearch-cluster

@@ -45,4 +45,11 @@
   tags:
     - pv
 
+- hosts: kube-master
+  become: yes
+  roles:
+    - elasticsearch
+  tags:
+    - es
+
 # vim:ft=ansible:
