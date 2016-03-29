@@ -31,13 +31,17 @@
   with_nested:
     - "{{ groups.nodes }}"
     - [ 'glusterfs-client_3.6.9.deb', 'glusterfs-common_3.6.9.deb', 'libaio1_0.3.109.deb', 'libdevmapper-event_1.02.1.deb', 'libibverbs1_1.1.7.deb', 'liblvm2app2_2.02.98.deb', 'librdmacm1_1.0.16.deb', 'attr1_2.4.47.deb' ]
+  run_once: true
 
 - name: "Install all GlusterFS packages"
+  register: install_result
   shell: dpkg -i * chdir=/tmp/gluster_client/
   delegate_to: "{{ item }}"
   with_items:
     - "{{ groups.nodes }}"
   run_once: true
+
+- debug: var=install_result
 #- name: Ensure Gluster volume is mounted.
 #  mount:
 #    name: "{{ gluster_mnt_dir }}"
