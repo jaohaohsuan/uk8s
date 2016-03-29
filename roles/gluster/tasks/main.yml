@@ -15,23 +15,6 @@
 
 - service: name=glusterfs-server state=started enabled=yes
 
-- name: Create mount folder and brick
-  file: "path={{ item }} state=directory mode=0775"
-  with_items:
-    - "{{ gluster_mnt_dir }}"
-    - "{{ gluster_brk_dir }}"
-
-- name: Configure Gluster volume.
-  gluster_volume:
-    state: present
-    name: "{{ gluster_vlm_name }}"
-    brick: "{{ gluster_brk_dir }}"
-    replicas: 2
-    cluster: "{{ groups.glusters | join(',') }}"
-    host: "{{ inventory_hostname }}"
-    force: yes
-  run_once: true
-
 - name: Copy GlusterFS client and dependency package to kubernetes node machines.
   copy: "src=roles/gluster/files/{{ item[1] }} dest=/tmp/gluster_client/ mode=0744"
   delegate_to: "{{ item[0] }}"
@@ -58,10 +41,3 @@
     - "{{ groups.nodes }}"
   run_once: true
   when: knode_result.results[0].rc != 0
-#- name: Ensure Gluster volume is mounted.
-#  mount:
-#    name: "{{ gluster_mnt_dir }}"
-#    src: "{{ inventory_hostname }}:/{{ gluster_vlm_name }}"
-#    fstype: glusterfs
-#    opts: "defaults,_netdev"
-#    state: mounted

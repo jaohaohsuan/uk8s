@@ -1,0 +1,32 @@
+---
+# HOW TO USE
+# step1. add gluster_vol into dependencies list in your_role/meta/main.yml:
+#  'your_role/meta/main.yml' example:
+#    ---
+#    dependencies:
+#      - { role: gluster_vol }
+#
+# step2. create var under your_role/default/main.yml, key name is "gluster_volume_name"
+#
+- name: Create mount folder and brick
+  file: "path={{ gluster_volume_name }} state=directory mode=0775"
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ groups.glusters }}"
+  when: gluster_volume_name is defined
+
+- name: Create '{{ gluster_volume_name }}' volume
+  gluster_volume:
+    state: present
+    name: "{{ gluster_volume_name }}"
+    brick: "{{ '/data/brick/' + gluster_volume_name }}"
+    replicas: 2
+    cluster: "{{ groups.glusters | join(',') }}"
+    force: yes
+  run_once: yes
+  become: yes
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ groups.glusters }}"
+  when: gluster_volume_name is defined
+
