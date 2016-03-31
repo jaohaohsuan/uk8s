@@ -17,4 +17,6 @@ kube_service_ip: "{{ service_cluster_ip_range|ipaddr('net')|ipaddr(1)|ipaddr('ad
 
 etcd_endpoints: "{% for node in groups['masters'] %}http://{{ node }}:2379{% if not loop.last %},{% endif %}{% endfor %}"
 
-registry_vol: gvol2
+# gluster volumes
+registry_vol: registry2
+gluster_volume_names: "[ 'elasticsearch', '{{registry_vol}}' ]"

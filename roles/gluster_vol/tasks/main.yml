@@ -6,7 +6,7 @@
 #    dependencies:
 #      - { role: gluster_vol }
 #
-# step2. create var under your_role/default/main.yml, key name is "gluster_volume_name"
+# step2. create var under your_role/default/main.yml, key name is "gluster_volume_names"
 #
 - set_fact:
     brick_path: "/data/brick/"
@@ -16,18 +16,18 @@
   delegate_to: "{{ item[1] }}"
   run_once: yes
   with_nested:
-    - "{{ gluster_volume_name }}"
+    - "{{ gluster_volume_names }}"
     - "{{ groups.glusters }}"
-  when: gluster_volume_name is defined and groups.glusters is defined
+  when: gluster_volume_names is defined and groups.glusters is defined
 
-- name: Check gluster volume '{{ gluster_volume_name }}'
+- name: Check gluster volume '{{ gluster_volume_names }}'
   command: gluster volume info
   register: vol_info
   become: yes
   run_once: yes
   changed_when: false
   delegate_to: "{{ groups.glusters[0] }}"
-  when: gluster_volume_name is defined and groups.glusters is defined
+  when: gluster_volume_names is defined and groups.glusters is defined
 
 - name: Create Gluster volume
   gluster_volume:
@@ -42,5 +42,5 @@
   delegate_to: "{{ groups.glusters[0] }}"
   when: item is defined and vol_info.stdout.find("{{ item }}") == -1
   with_items:
-    - "{{ gluster_volume_name }}"
+    - "{{ gluster_volume_names }}"
 

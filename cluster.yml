@@ -35,6 +35,7 @@
   become: yes
   roles:
     - gluster
+    - gluster_vol
   tags:
     - pv
 
