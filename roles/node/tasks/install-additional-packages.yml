@@ -1,0 +1,17 @@
+---
+- set_fact:
+    nsenter_path: "roles/node/files/{{ ansible_distribution }}/nsenter"
+
+- name: Install "utility "socat"
+  apt: name=socat state=present
+
+- local_action:
+    stat path="{{ nsenter_path }}"
+  register: nsenter_result
+  become: no
+
+- include: build-nsenter.yml
+  when: not nsenter_result.stat.exists
+
+- name: Install utility "nsenter"
+  copy: src="{{ nsenter_path }}" dest=/usr/local/bin mode=0755

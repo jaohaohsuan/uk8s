@@ -1,6 +1,7 @@
 ---
 
 #- include: gluster-client.yml
+- include: install-additional-packages.yml
 
 - file: path=/etc/kubernetes/manifests state=directory mode=0644
   name: manifests directory
