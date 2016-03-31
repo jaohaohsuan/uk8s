@@ -5,7 +5,8 @@ dns_domain: cluster.local
 private_network_iface: eth1
 
 flannel_network: "172.16.0.0/16"
-flannel_backends: "host-gw"
+#host-gw
+flannel_backends: "vxlan"
 
 # A CIDR notation IP range from which to assign service cluster IPs.
 # This must not overlap with any IP ranges assigned to nodes for pods.
@@ -15,3 +16,5 @@ dns_server: "{{ service_cluster_ip_range|ipaddr('net')|ipaddr(10)|ipaddr('addres
 kube_service_ip: "{{ service_cluster_ip_range|ipaddr('net')|ipaddr(1)|ipaddr('address') }}"
 
 etcd_endpoints: "{% for node in groups['masters'] %}http://{{ node }}:2379{% if not loop.last %},{% endif %}{% endfor %}"
+
+registry_vol: gvol2

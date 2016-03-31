@@ -15,8 +15,9 @@
   register: tokens
   with_items: "{{binaries}}"
   delegate_to: "{{ groups['masters'][0] }}"
+  changed_when: false
 
-- debug: var=tokens
+#- debug: var=tokens
 
 - set_fact: 
     tokens: "{{ tokens.results | map(attribute='stdout')| map('from_json') | list }}"

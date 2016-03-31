@@ -30,13 +30,6 @@
   tags:
     - join
     - k8s
-- hosts: masters
-  become: yes
-  roles:
-    - "kube-addons"
-  tags:
-    - k8s
-    - addons
 
 - hosts: glusters
   become: yes
@@ -51,5 +44,13 @@
     - elasticsearch
   tags:
     - es
+
+- hosts: masters
+  become: yes
+  roles:
+    - "kube-addons"
+  tags:
+    - k8s
+    - addons
 
 # vim:ft=ansible:

@@ -1,0 +1,32 @@
+---
+
+- file: path="{{ kube_addons_dir }}/registry" state=directory mode=0744
+
+- template: src="gluster-endpoints.yml.j2" dest="/srv/kubernetes/glusterfs-cluster-endpoints.yml"
+  name: gather glusters ip into glusterfs-cluster-endpoints.yml
+
+- copy: src="glusterfs-cluster-svc.yml" dest="/srv/kubernetes/glusterfs-cluster-svc.yml"
+  name: copy glusterfs-cluster-svc.yml
+
+- command: "kubectl apply -f {{item[0]}} --namespace {{item[1]}}"
+  args:
+    chdir: /srv/kubernetes
+  with_nested:
+    - [ 'glusterfs-cluster-svc.yml', 'glusterfs-cluster-endpoints.yml' ]
+    - [ 'default', 'kube-system' ]
+  name: create gluster endpoints and service
+
+- copy: src=registry-svc.yaml dest="{{ kube_addons_dir }}/registry/registry-svc.yaml"
+  
+- template: src=registry-rc.yaml.j2 dest="{{ kube_addons_dir }}/registry/registry-rc.yaml"
+
+- command: "kubectl apply -f {{item}}"
+  args:
+    chdir: "{{ kube_addons_dir }}/registry"
+  with_items:
+    - "registry-svc.yaml"
+    - "registry-rc.yaml"
+
+- copy: src="registry-proxy.yaml" dest="/etc/kubernetes/manifests/registry-proxy.yaml"
+  delegate_to: "{{item}}"
+  with_items: "{{groups.nodes}}"

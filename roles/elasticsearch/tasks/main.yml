@@ -6,18 +6,14 @@
 
 - file: path=/srv/kubernetes/manifest state=directory
 
-- template: 
-    src: "gluster-endpoints.yml.j2"
-    dest: "/srv/kubernetes/manifest/glusterfs-cluster-endpoints.yml"
+# - copy: src="glusterfs-cluster-svc.yml" dest="/srv/kubernetes/manifest/glusterfs-cluster-svc.yml"
 
-- copy: src="glusterfs-cluster-svc.yml" dest="/srv/kubernetes/manifest/glusterfs-cluster-svc.yml"
-
-- command: "kubectl apply -f {{item}}.yml"
-  args:
-    chdir: "/srv/kubernetes/manifest"
-  with_items:
-    - "glusterfs-cluster-endpoints"
-    - "glusterfs-cluster-svc"
+# - command: "kubectl apply -f {{item}}.yml"
+#   args:
+#     chdir: "/srv/kubernetes/manifest"
+#   with_items:
+#     - "glusterfs-cluster-endpoints"
+#     - "glusterfs-cluster-svc"
 
       
 - command: "kubectl apply -f {{item}}"

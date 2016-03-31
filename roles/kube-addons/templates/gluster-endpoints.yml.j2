@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: glusterfs-cluster
+subsets:
+- addresses:
+{% for host in groups.glusters %}
+  - ip: {{hostvars[host]['ansible_' + private_network_iface]['ipv4']['address']}}
+{% endfor %}
+  ports:
+  - port: 1

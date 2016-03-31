@@ -2,6 +2,9 @@
 
 #- include: gluster-client.yml
 
+- file: path=/etc/kubernetes/manifests state=directory mode=0644
+  name: manifests directory
+
 - copy: src="{{easyrsa_dir}}/pki/ca.crt" dest=/srv/kubernetes/ca.crt mode=0644
 
 - include: tokens.yml
