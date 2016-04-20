@@ -31,21 +31,6 @@ Vagrant.configure(2) do |config|
     vb.cpus = 1
   end
 
-  nodes = Array.new()
-
-  $num_nodes.times do |i|
-    name = "kube-node-#{i+1}"
-    nodes.push(name)
-    config.vm.define "#{name}" do |n|
-      n.vm.hostname = name
-      n.vm.network "private_network", ip: "10.168.10.#{10+i}", :netmask => "255.255.255.0"
-      n.vm.network "public_network"
-      n.vm.provider :virtualbox do |vb, override|
-        set_vbox(vb, override, 2048)
-      end
-    end
-  end
-
   glusters = Array.new()
 
   $num_glusters.times do |i|
@@ -61,6 +46,30 @@ Vagrant.configure(2) do |config|
     end
   end 
 
+  config.vm.define "kube-master" do |n|
+    n.vm.hostname = "kube-master"
+    n.vm.network "private_network", ip: "10.168.10.80", :netmask => "255.255.255.0"
+    n.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)"
+    n.vm.provider :virtualbox do |vb, override|
+     set_vbox(vb, override, 1024)
+    end
+  end
+
+  nodes = Array.new()
+
+  $num_nodes.times do |i|
+    name = "kube-node-#{i+1}"
+    nodes.push(name)
+    config.vm.define "#{name}" do |n|
+      n.vm.hostname = name
+      n.vm.network "private_network", ip: "10.168.10.#{10+i}", :netmask => "255.255.255.0"
+      n.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)"
+      n.vm.provider :virtualbox do |vb, override|
+        set_vbox(vb, override, 2048)
+      end
+    end
+  end
+
   groups = {
     :etcd => ["kube-master"],
     :masters => ["kube-master"],
@@ -69,21 +78,11 @@ Vagrant.configure(2) do |config|
     :'all_groups:children' => ["etcd", "masters", "nodes", "glusters"]
   }
 
-  config.vm.define "kube-master" do |n|
-    n.vm.hostname = "kube-master"
-    n.vm.network "private_network", ip: "10.168.10.80", :netmask => "255.255.255.0"
-    n.vm.network "public_network"
-    n.vm.provider :virtualbox do |vb, override|
-      set_vbox(vb, override, 1024)
-    end
-
-    n.vm.provision :ansible do |ansible|
-      ansible.groups = groups
-      ansible.playbook = "connection.yml"
-      ansible.limit = "all"
-      ansible.extra_vars = { private_network_iface: "eth1" }
-    end
-  
+  config.vm.provision :ansible do |ansible|
+    ansible.groups = groups
+    ansible.playbook = "connection.yml"
+    ansible.limit = "all"
+    ansible.extra_vars = { private_network_iface: "eth1" }
   end
 
   # Disable automatic box update checking. If you disable this, then
