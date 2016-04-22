@@ -1,0 +1,40 @@
+{
+  "mappings": {
+    ".percolator": {
+      "properties": {
+        "referredClauses": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "string",
+          "include_in_all": false
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "view": {
+          "type": "object",
+          "enabled": false
+        },
+        "occurs": {
+          "type": "object",
+          "enabled": false
+        }
+      }
+    }
+{% for item in inu_datasources %}
+    ,"{{ item.type }}": {
+        "properties": {
+          "dialogs":          { "type": "string", "analyzer": "{{ item.analyzer }}" }
+{% for n in range(3) %}
+         ,"agent{{ n }}":    { "type": "string", "analyzer": "{{ item.analyzer }}" }
+         ,"customer{{ n }}": { "type": "string", "analyzer": "{{ item.analyzer }}"}
+{% endfor %}
+        }
+      }
+{% endfor %}
+  }
+}

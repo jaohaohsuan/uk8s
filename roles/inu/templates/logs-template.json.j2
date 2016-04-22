@@ -1,0 +1,62 @@
+{
+	"template": "logs-*",
+	"mappings": {
+{% set comma = joiner(",") %}
+{% for item in inu_datasources %}
+		{{ comma() }}"{{ item.type }}": {
+			"dynamic": "dynamic",
+			"_source": { "enabled": true },
+			"dynamic_date_formats": [ "YYYY-MM-dd hh:mm:ss", "strict_date_optional_time||epoch_millis" ],
+			"dynamic_templates": [
+				{
+                  "agent": {
+                     "match_pattern": "regex",
+                     "mapping": {
+                        "analyzer": "{{ item.analyzer }}",
+                        "type": "string"
+                     },
+                     "match_mapping_type": "string",
+                     "match": "^agent\\d+$"
+                  }
+               },
+               {
+                  "customer": {
+                     "match_pattern": "regex",
+                     "mapping": {
+                        "analyzer": "{{ item.analyzer }}",
+                        "type": "string"
+                     },
+                     "match_mapping_type": "string",
+                     "match": "^customer\\d+$"
+                  }
+               },
+               {
+                  "vtt": {
+                     "match_pattern": "regex",
+                     "mapping": {
+                        "type": "string"
+                     },
+                     "match_mapping_type": "string",
+                     "match": "^vtt$"
+                  }
+               },
+               {
+                  "dialogs": {
+                     "match_pattern": "regex",
+                     "mapping": {
+                        "analyzer": "{{ item.analyzer }}",
+                        "type": "string"
+                     },
+                     "match_mapping_type": "string",
+                     "match": "^dialogs$"
+                  }
+               }
+
+			],
+			"_all": {
+               "enabled": false
+            }
+		}
+{% endfor %}
+	}
+}

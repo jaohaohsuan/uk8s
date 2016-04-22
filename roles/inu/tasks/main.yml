@@ -1,0 +1,71 @@
+---
+- set_fact:
+    stored_query_mappings: "{{ lookup('template','stored-query.mappings.json.j2') }}"
+    logs_template: "{{ lookup('template','logs-template.json.j2') }}"
+    loglevel: "debug"
+
+- debug: "msg={{inu_datasources[0]}}"
+  when: loglevel == "debug"
+
+- debug: "msg={{ stored_query_mappings['mappings']['ami-l8k'] }}"
+  when: loglevel == 'debug'
+
+- debug: "msg={{ logs_template['mappings']['ytx'] }}"
+  when: loglevel == 'debug'
+
+- shell: |
+    kubectl get endpoints elasticsearch --no-headers 2>&1 \
+    | grep -v "not found" \
+    | awk '{print $2}' \
+    | cut -d ',' -f 1
+  become: yes
+  register: shell_result
+  changed_when: false
+
+- debug: "var=shell_result"
+  when: loglevel == 'debug'
+
+- set_fact:
+    es_address: "http://{{ shell_result.stdout }}"
+
+- uri: |
+    url={{ es_address }}
+    status_code=200
+  register: api_result
+
+- debug: var=api_result
+  when: loglevel == 'debug'
+
+- uri: |
+    url={{ es_address }}/_template/tmeplate1
+    method=PUT
+    body_format=json
+    HEADER_Content-Type=application/json
+    body={{ logs_template }}
+    status_code=200
+  register: api_result
+  name: "apply Index Template"
+
+- debug: var=api_result
+  when: loglevel == 'debug'
+
+- uri: |
+    url={{ es_address }}/stored-query
+    method=HEAD
+    status_code=200,404
+  register: api_result
+
+- uri: |
+    url={{ es_address }}/stored-query
+    method=PUT
+    body_format=json
+    HEADER_Content-Type=application/json
+    body={{ lookup('file', 'stored-query.settings.json') }}
+    status_code=200,201
+  name: Create stored-query Index
+  when: api_result.status == 404
+  register: api_result
+
+- debug: var=api_result
+  when: loglevel == 'debug'
+
