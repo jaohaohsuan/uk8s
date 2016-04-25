@@ -8,9 +8,9 @@
 
 - copy: src="{{easyrsa_dir}}/pki/ca.crt" dest=/srv/kubernetes/ca.crt mode=0644
 
-- copy: src="{{easyrsa_dir}}/pki/issued/kube-master.crt" dest=/srv/kubernetes/server.crt mode=0644
+- copy: src="{{easyrsa_dir}}/pki/issued/{{inventory_hostname}}.crt" dest=/srv/kubernetes/server.crt mode=0644
 
-- copy: src="{{easyrsa_dir}}/pki/private/kube-master.key" dest=/srv/kubernetes/server.key mode=0600
+- copy: src="{{easyrsa_dir}}/pki/private/{{inventory_hostname}}.key" dest=/srv/kubernetes/server.key mode=0600
 
 - lineinfile: dest=/srv/kubernetes/known_basic_auth.csv regexp=admin,admin line="admin,admin,admin" create=yes
 

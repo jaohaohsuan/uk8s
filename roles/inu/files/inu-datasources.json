@@ -1,0 +1,10 @@
+[
+  {
+    "type": "ytx",
+    "analyzer": "ik"
+  },
+  {
+    "type": "ami-l8k",
+    "analyzer": "ik"
+  }
+]

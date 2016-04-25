@@ -20,7 +20,7 @@
     - "{{ groups.glusters }}"
   when: gluster_volume_names is defined and groups.glusters is defined
 
-- name: Check gluster volume '{{ gluster_volume_names }}'
+- name: "Check gluster volume '{{ gluster_volume_names }}'"
   command: gluster volume info
   register: vol_info
   become: yes
@@ -34,7 +34,7 @@
     state: present
     name: "{{ item }}"
     brick: "{{ brick_path + item }}"
-    replicas: 2
+    replicas: 0
     cluster: "{{ groups.glusters | join(',') }}"
     force: yes
   run_once: yes
