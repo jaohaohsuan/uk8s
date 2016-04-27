@@ -1,1 +1,2 @@
-inu_datasources : "{{ lookup('file','inu-datasources.json') }}"
+inu_datasources: "{{ lookup('file','inu-datasources.json') }}"
+es_address: "http://localhost:9200"

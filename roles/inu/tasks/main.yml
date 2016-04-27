@@ -4,14 +4,14 @@
     logs_template: "{{ lookup('template','logs-template.json.j2') }}"
     loglevel: "debug"
 
-- debug: "msg={{inu_datasources[0]}}"
-  when: loglevel == "debug"
+# - debug: "msg={{inu_datasources[0]}}"
+#   when: loglevel == "debug"
 
-- debug: "msg={{ stored_query_mappings['mappings']['ami-l8k'] }}"
-  when: loglevel == 'debug'
+# - debug: "msg={{ stored_query_mappings['mappings']['ami-l8k'] }}"
+#   when: loglevel == 'debug'
 
-- debug: "msg={{ logs_template['mappings']['ytx'] }}"
-  when: loglevel == 'debug'
+# - debug: "msg={{ logs_template['mappings']['ytx'] }}"
+#   when: loglevel == 'debug'
 
 - shell: |
     kubectl get endpoints elasticsearch --no-headers 2>&1 \
@@ -27,6 +27,7 @@
 
 - set_fact:
     es_address: "http://{{ shell_result.stdout }}"
+  when: shell_result.stdout != ""
 
 - uri: |
     url={{ es_address }}
