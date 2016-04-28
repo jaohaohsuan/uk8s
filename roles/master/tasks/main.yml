@@ -14,14 +14,18 @@
 
 - lineinfile: dest=/srv/kubernetes/known_basic_auth.csv regexp=admin,admin line="admin,admin,admin" create=yes
 
-- copy: src="{{item}}.conf" dest="/etc/init/{{item}}.conf"
+- copy: src="{{item}}.service" dest="/lib/systemd/system/{{item}}.service"
   with_items: "{{services}}"
 
 - template: src="{{item}}.j2" dest="/etc/default/{{item}}"
   with_items: "{{services}}"
 
-- service: name="{{item}}" state=started
+- service: name="{{item}}" state=started enabled=yes
   with_items: "{{services}}"
+
+- command: systemctl daemon-reload
+  changed_when: false
+  name: systemctl daemon-reload
 
 - set_fact:
     kubectl_exist: "{{lookup('pipe','test -f /usr/local/bin/kubectl && echo true || echo false')}}"

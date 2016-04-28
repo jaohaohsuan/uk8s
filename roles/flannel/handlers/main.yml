@@ -1,10 +1,10 @@
 ---
 
-- name: service restart flanneld
-  service: name=flanneld state=restarted
-  when: flanneld_started.changed == false
-  register: flanneld_started
+- name: service restart flannel
+  service: name=flannel state=restarted
+  when: flannel_started.changed == false
+  register: flannel_started
 
 - service: name=docker state=restarted
   name: service restart docker
-  when: flanneld_started.changed
+  when: flannel_started.changed

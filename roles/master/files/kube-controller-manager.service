@@ -1,0 +1,12 @@
+[Unit]
+Description=kube-controller-manager
+After=kube-apiserver.service
+
+[Service]
+EnvironmentFile=-/etc/default/%p
+ExecStart=/usr/bin/kube-controller-manager $KUBE_CONTROLLER_MANAGER_OPTS
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

@@ -25,19 +25,19 @@
   with_items:
     - flanneld
 
-- copy: src=flanneld.conf dest=/etc/init
-  name: copy to upstart script
+- copy: src=flannel.service dest=/lib/systemd/system
+  name: install flannel service
   notify:
-    - service restart flanneld
+    - service restart flannel
     - service restart docker
 
-- template: src=flanneld.j2 dest=/etc/default/flanneld
+- template: src=flannel.j2 dest=/etc/default/flannel
   name: config
 
-- service: name=flanneld state=started
-  register: flanneld_started
+- service: name=flannel state=started enabled=yes
+  register: flannel_started
 
 - service: name=docker state=restarted
-  when: flanneld_started.changed
+  when: flannel_started.changed
 
-- debug: var=flanneld_started
+#- debug: var=flanneld_started

@@ -1,0 +1,12 @@
+[Unit]
+Description=kubelet
+After=kube-apiserver.service
+
+[Service]
+EnvironmentFile=-/etc/default/%p
+ExecStart=/usr/bin/kubelet $KUBELET_OPTS
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

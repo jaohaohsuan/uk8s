@@ -15,6 +15,7 @@
   name: gather kernel
 
 - debug: msg="kernel {{kernel.stdout}}"
+  name: kernel
 
 - apt: name={{item}} state=present update_cache=yes cache_valid_time=43200
   with_items:
@@ -25,19 +26,20 @@
     - "apparmor"
   name: install packages
 
-- apt_key:
-    keyserver: hkp://p80.pool.sks-keyservers.net:80
-    id: 58118E89F3A912897C070ADBF76221572C52609D
-    state: present
-  name: add the new GPG key
+# - apt_key:
+#     keyserver: hkp://p80.pool.sks-keyservers.net:80
+#     id: 58118E89F3A912897C070ADBF76221572C52609D
+#     state: present
+#   name: add the new GPG key
 
-- apt_repository: repo="deb https://apt.dockerproject.org/repo ubuntu-trusty main"
-  name: add docker repository entry
+# - apt_repository: repo="deb https://apt.dockerproject.org/repo ubuntu-trusty main"
+#   name: add docker repository entry
 
 - apt: name=lxc-docker purge=yes state=absent 
   name: purge the old repo if it exists
 
-- apt: name=docker-engine=1.10.3-0~trusty state=present update_cache=yes cache_valid_time=43200
-  name: install docker-engine
+- apt: name=docker.io state=present update_cache=yes cache_valid_time=43200
+  name: install docker.io
 
-- include: "flannel-config.yml"
+- copy: src=flannel.conf dest=/etc/systemd/system/docker.service.d/flannel.conf mode=0644
+  name: add flannel.conf drop-ins 
