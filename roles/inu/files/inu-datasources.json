@@ -1,10 +1,10 @@
 [
   {
     "type": "ytx",
-    "analyzer": "whitespace"
+    "analyzer": "stt_analyzer"
   },
   {
     "type": "ami-l8k",
-    "analyzer": "whitespace"
+    "analyzer": "stt_analyzer"
   }
 ]

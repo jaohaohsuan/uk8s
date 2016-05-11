@@ -1,5 +1,10 @@
 {
 	"template": "logs-*",
+   "settings": {
+      "number_of_shards": 5,
+      "number_of_replicas" : 1,
+      "analysis": {{ es_analysis }}
+   },
 	"mappings": {
 {% set comma = joiner(",") %}
 {% for item in inu_datasources %}

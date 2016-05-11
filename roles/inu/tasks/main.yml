@@ -3,15 +3,6 @@
     logs_template: "{{ lookup('template','logs-template.json.j2') }}"
     loglevel: "debug"
 
-# - debug: "msg={{inu_datasources[0]}}"
-#   when: loglevel == "debug"
-
-# - debug: "msg={{ stored_query_mappings['mappings']['ami-l8k'] }}"
-#   when: loglevel == 'debug'
-
-# - debug: "msg={{ logs_template['mappings']['ytx'] }}"
-#   when: loglevel == 'debug'
-
 - shell: |
     kubectl get endpoints elasticsearch --no-headers 2>&1 \
     | grep -v "not found" \
@@ -53,15 +44,38 @@
   register: api_result
   name: HEAD stored-query index
 
+- debug: msg="{{ lookup('template', 'stored-query.settings.json.j2') }}"
+
 - uri: |
     url={{ es_address }}/stored-query
     method=PUT
     body_format=json
     HEADER_Content-Type=application/json
-    body={{ lookup('file', 'stored-query.settings.json') }}
+    body={{ lookup('file', 'stored-query.index.settings.json') }}
     status_code=200,201
   name: Create stored-query Index
   when: api_result.status == 404
+
+- uri: |
+    url={{ es_address }}/stored-query/_close
+    method=POST
+    status_code=200
+  name: Close stored-query
+
+- uri: |
+    url={{ es_address }}/stored-query/_settings
+    method=PUT
+    body_format=json
+    HEADER_Content-Type=application/json
+    body={{ lookup('template', 'stored-query.settings.json.j2') }}
+    status_code=200
+  name: Update stored-query settings
+
+- uri: |
+    url={{ es_address }}/stored-query/_open
+    method=POST
+    status_code=200
+  name: Open stored-query
 
 - uri: |
     url={{ es_address }}/stored-query/_mapping/.percolator
@@ -70,7 +84,6 @@
     HEADER_Content-Type=application/json
     body={{ lookup('template','stored-query-percolator.properties.json.j2') }}
     status_code=200
-  when: api_result.status == 200
   name: .percolator properties update
 
 - uri: |
@@ -81,7 +94,6 @@
     body={{ lookup('template','stored-query-datasource.properties.json.j2') }}
     status_code=200
   with_items: "{{ inu_datasources }}"
-  when: api_result.status == 200
 
 - debug: var=api_result
   when: loglevel == 'debug'
