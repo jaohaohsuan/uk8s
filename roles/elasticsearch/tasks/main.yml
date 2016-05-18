@@ -3,18 +3,8 @@
 
 - git: repo=https://github.com/jaohaohsuan/kubernetes-elasticsearch-cluster.git
        dest=/github/elasticsearch-cluster
+       version=fc5c8d7ad3f97d71e3e54fcc0e5be704f13ee96e
   become: yes
-
-- file: path=/srv/kubernetes/manifest state=directory
-
-# - copy: src="glusterfs-cluster-svc.yml" dest="/srv/kubernetes/manifest/glusterfs-cluster-svc.yml"
-
-# - command: "kubectl apply -f {{item}}.yml"
-#   args:
-#     chdir: "/srv/kubernetes/manifest"
-#   with_items:
-#     - "glusterfs-cluster-endpoints"
-#     - "glusterfs-cluster-svc"
 
 - command: "kubectl apply -f {{item}}"
   args:
@@ -31,8 +21,8 @@
   register: result
   until: "'Running' in result.stdout"
   changed_when: false
-  retries: 10
-  delay: 30
+  retries: 1000
+  delay: 60
 
 - command: kubectl apply -f es-client-rc.yaml
   args:
@@ -43,8 +33,8 @@
   register: result
   until: "'Running' in result.stdout"
   changed_when: false
-  retries: 10
-  delay: 30
+  retries: 1000
+  delay: 60
 
 - command: kubectl apply -f es-data-rc.yaml
   args:
