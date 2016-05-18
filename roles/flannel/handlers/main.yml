@@ -1,10 +1,7 @@
 ---
 
-- name: service restart flannel
+- name: restart flannel
   service: name=flannel state=restarted
-  when: flannel_started.changed == false
-  register: flannel_started
 
-- service: name=docker state=restarted
-  name: service restart docker
-  when: flannel_started.changed
+- name: daemon realod
+  command: "systemctl daemon-reload"

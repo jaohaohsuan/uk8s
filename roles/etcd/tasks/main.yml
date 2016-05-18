@@ -3,12 +3,22 @@
 - apt: name=etcd state=present
   name: install etcd
 
-- lineinfile: dest=/etc/default/etcd line='ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"'
+- lineinfile: >
+    dest=/etc/default/etcd 
+    regexp='^#\sETCD_LISTEN_CLIENT_URLS=' 
+    backrefs=yes 
+    line='ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"'
 
-- lineinfile: dest=/etc/default/etcd line='ETCD_ADVERTISE_CLIENT_URLS="http://{{private_host_ipv4}}:2379"'
+- lineinfile: >
+    dest=/etc/default/etcd
+    regexp='^#\sETCD_ADVERTISE_CLIENT_URLS=' 
+    backrefs=yes 
+    line='ETCD_ADVERTISE_CLIENT_URLS="http://{{private_host_ipv4}}:2379"'
 
-- service: name=etcd state=started
+- command: systemctl daemon-reload
+
+- service: name=etcd state=restarted
 
 - wait_for: 'host="{{private_host_ipv4}}" port=2379 delay=3'
-
+  name: "wait for {{private_host_ipv4}}"
 - include: "flannel-config.yml"

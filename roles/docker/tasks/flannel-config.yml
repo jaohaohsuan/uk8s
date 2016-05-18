@@ -9,8 +9,9 @@
 #     regexp: "^DOCKER_OPTS=.*" 
 #     line: 'DOCKER_OPTS="--bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU} --ip-masq=${FLANNEL_IPMASQ} --insecure-registry gcr.io --insecure-registry quay.io"'
 
-# - lineinfile:
-#     dest: /etc/default/docker
-#     regexp: "/run/flannel/subnet.env"
-#     line: ". /run/flannel/subnet.env"
-#     insertbefore: "^DOCKER_OPTS=.*"
+- lineinfile:
+    dest: "/lib/systemd/system/docker.service"
+    backrefs: yes
+    regexp: "^ExecStart=/usr/bin/docker daemon -H fd://"
+    line: "ExecStart=/usr/bin/docker daemon -H fd:// $DOCKER_OPTS"
+  name: add $DOCKER_OPTS to docker.service ExecStart

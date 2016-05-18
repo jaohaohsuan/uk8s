@@ -1,45 +1,20 @@
 ---
 
-# - name: check apt last update
-#   stat: path=/var/cache/apt
-#   register: apt_cache_stat
-# - name: update apt if needed
-#   apt: update_cache=yes
-#   when: ansible_date_time.epoch|float - apt_cache_stat.stat.mtime > 60*60*12
 - include: "cgroup-enable.yml"
   name: enable cgroup
 
-- shell: echo `uname -r`
-  register: kernel
+- command: which docker
+  register: docker_exist
   changed_when: false
-  name: gather kernel
 
-- debug: msg="kernel {{kernel.stdout}}"
-  name: kernel
+- shell: |
+    curl -fsSL https://get.docker.com/ | sh
+  become: yes
+  name: install docker
+  when: docker_exist.rc != 0
 
-- apt: name={{item}} state=present update_cache=yes cache_valid_time=43200
-  with_items:
-    - "apt-transport-https"
-    - "ca-certificates"
-    - "bridge-utils"
-    - "linux-image-extra-{{kernel.stdout}}"
-    - "apparmor"
-  name: install packages
-
-# - apt_key:
-#     keyserver: hkp://p80.pool.sks-keyservers.net:80
-#     id: 58118E89F3A912897C070ADBF76221572C52609D
-#     state: present
-#   name: add the new GPG key
-
-# - apt_repository: repo="deb https://apt.dockerproject.org/repo ubuntu-trusty main"
-#   name: add docker repository entry
-
-- apt: name=lxc-docker purge=yes state=absent 
-  name: purge the old repo if it exists
-
-- apt: name=docker.io state=present update_cache=yes cache_valid_time=43200
-  name: install docker.io
-
-- copy: src=flannel.conf dest=/etc/systemd/system/docker.service.d/flannel.conf mode=0644
-  name: add flannel.conf drop-ins 
+- include: "flannel-config.yml"
+  when: docker_exist.rc == 0
+  
+- user: name={{ ansible_user }} group=docker
+  name: "add {{ ansible_user }} to docker group"
