@@ -9,6 +9,8 @@
   changed_when: false
   become: no
 
+#- debug: var=hostvars[inventory_hostname]
+
 - set_fact:
     local_download_dir: "{{current_pwd.stdout}}/downloads"
     private_host_ipv4: "{{ hostvars[inventory_hostname]['ansible_' + private_network_iface]['ipv4']['address'] }}"

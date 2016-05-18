@@ -2,7 +2,7 @@
 
 dns_domain: cluster.local
 
-private_network_iface: enp0s3
+private_network_iface: eno1
 
 flannel_network: "172.16.0.0/16"
 #host-gw
@@ -19,4 +19,4 @@ etcd_endpoints: "{% for node in groups['masters'] %}http://{{hostvars[node]['ans
 
 # gluster volumes
 registry_vol: registry2
-gluster_volume_names: "[ 'elasticsearch', '{{registry_vol}}', 'mongodb' ]"
+gluster_volume_names: "[ 'elasticsearch', '{{registry_vol}}', 'mongodb', 'cassandra3' ]"

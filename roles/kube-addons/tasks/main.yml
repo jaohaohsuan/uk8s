@@ -22,6 +22,6 @@
 
 - include: dns.yml
 
-#- include: registry.yml
+- include: registry.yml
 
 # - include: dashboard.yml

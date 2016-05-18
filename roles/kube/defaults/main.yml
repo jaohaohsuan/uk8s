@@ -1,3 +1,4 @@
-kube_relase_ver: v1.2.0
+kube_release_ver: v1.2.4
+kube_release_checksum: "md5:ab0aca3a20e8eba43c8ff9d672793618"
 kube_binaries_dir: "{{local_download_dir}}/kubernetes/server/kubernetes/server/bin"
 kube_apiserver: "{% for master in groups['masters'] %}https://{{ hostvars[master]['ansible_' + private_network_iface].ipv4.address }}:443{% if not loop.last %},{% endif %}{% endfor %}"

@@ -1,5 +1,4 @@
 ---
-
 - copy: >
     src="{{ kube_binaries_dir }}/{{ item }}"
     dest="/usr/bin/{{ item }}"
@@ -7,32 +6,46 @@
   with_items: "{{binaries}}"
 
 - copy: src="{{easyrsa_dir}}/pki/ca.crt" dest=/srv/kubernetes/ca.crt mode=0644
+  notify: 
+    - restart services
+    - daemon realod
 
 - copy: src="{{easyrsa_dir}}/pki/issued/{{inventory_hostname}}.crt" dest=/srv/kubernetes/server.crt mode=0644
+  notify: 
+    - restart services
+    - daemon realod
 
 - copy: src="{{easyrsa_dir}}/pki/private/{{inventory_hostname}}.key" dest=/srv/kubernetes/server.key mode=0600
+  notify: 
+    - restart services
+    - daemon realod
 
 - lineinfile: dest=/srv/kubernetes/known_basic_auth.csv regexp=admin,admin line="admin,admin,admin" create=yes
+  notify: 
+    - restart services
+    - daemon realod
 
 - copy: src="{{item}}.service" dest="/lib/systemd/system/{{item}}.service"
   with_items: "{{services}}"
+  notify: 
+    - restart services
+    - daemon realod
 
 - template: src="{{item}}.j2" dest="/etc/default/{{item}}"
   with_items: "{{services}}"
+  notify: 
+    - restart kube services
+    - daemon realod
 
 - service: name="{{item}}" state=started enabled=yes
   with_items: "{{services}}"
-
-- command: systemctl daemon-reload
-  changed_when: false
-  name: systemctl daemon-reload
 
 - set_fact:
     kubectl_exist: "{{lookup('pipe','test -f /usr/local/bin/kubectl && echo true || echo false')}}"
 
 - local_action:
     shell
-      curl -o /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/{{kube_relase_ver}}/bin/darwin/amd64/kubectl";
+      curl -o /usr/local/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/{{kube_release_ver}}/bin/darwin/amd64/kubectl";
       chmod +x /usr/local/bin/kubectl;
   when: (not kubectl_exist) and (control_machine_distribution == 'Darwin')
   become: no
@@ -49,13 +62,3 @@
       src=kubectl.kubeconfig.j2
       dest="~/.kube/config"
   become: no
-
-# - local_action:
-#     shell
-#       kubectl config set-cluster default-cluster --server={{kube_apiserver}} --certificate-authority={{certs_dir}}/ca.crt;
-#       kubectl config set-credentials default-admin --certificate-authority={{certs_dir}}/ca.crt --client-key={{certs_dir}}/private/kubecfg.key --client-certificate={{certs_dir}}/issued/kubecfg.crt;
-#       kubectl config set-context default-system --cluster=default-cluster --user=default-admin;
-#       kubectl config use-context default-system;
-#   name: "set host admin kubectl"
-#   changed_when: false
-#   become: no

@@ -1,0 +1,8 @@
+---
+
+- name: daemon realod
+  command: "systemctl daemon-reload"
+
+- name: restart services
+  service: name="{{item}}" state=restarted
+  with_items: "{{services}}"
