@@ -4,20 +4,22 @@
     loglevel: "debug"
 
 - shell: |
+    which kubectl
+  ignore_errors: yes
+  register: shell_result
+
+- shell: |
     kubectl get endpoints elasticsearch --no-headers 2>&1 \
     | grep -v "not found" \
     | awk '{print $2}' \
     | cut -d ',' -f 1
-  become: yes
-  register: shell_result
+  register: k8s_result
   changed_when: false
-
-- debug: "var=shell_result"
-  when: loglevel == 'debug'
+  when: shell_result.rc == 0
 
 - set_fact:
-    es_address: "http://{{ shell_result.stdout }}"
-  when: shell_result.stdout != ""
+    es_address: "http://{{ k8s_result.stdout }}"
+  when: shell_result.rc == 0
 
 - uri: |
     url={{ es_address }}
