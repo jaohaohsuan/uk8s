@@ -1,0 +1,39 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  roles:
+    #- cassandra
+    #- inu
+    #- etcd
+    - docker
+    #- flannel
+    #- master
+    #- node
+    #- gluster
+    #- gluster_vol
+    #- kube-addons
+    #- elasticsearch
+    
+    #- elasticsearch
+    # - etcd
+    
+    # - flannel
+    # - master
+    # - node
+    # - kube-addons
+    # - kube-addons
+
+    #- kube-addons
+
+    #- elasticsearch
+    #- kube-addons
+    #- gluster_vol
+
+
+
+        # - docker
+    # - etcd
+
+
+

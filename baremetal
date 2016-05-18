@@ -1,19 +1,22 @@
-master0 ansible_host=192.168.80.121 ansible_connection=ssh ansible_user=henry
+master1 ansible_host=192.168.40.50 ansible_user=inu
 
-[etcd]
-master0
+[xenials]
+master1
 
 [masters]
-master0
+master1
 
-[nodes]
-master0
+[etcd]
+master1
 
 [glusters]
-master0
+master1
+
+[nodes]
+master1
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python2.7
 
 [all_groups:children]
-etcd
-masters
-nodes
-glusters
+xenials
