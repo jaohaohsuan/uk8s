@@ -7,6 +7,9 @@
   name: manifests directory
 
 - copy: src="{{easyrsa_dir}}/pki/ca.crt" dest=/srv/kubernetes/ca.crt mode=0644
+  notify: 
+    - restart kube services
+    - daemon realod
 
 - include: tokens.yml
   name: gather tokens
@@ -16,18 +19,30 @@
 
 - template: src="{{item}}.kubeconfig.j2" dest="/var/lib/{{item}}/kubeconfig"
   with_items: "{{services}}"
+  notify: 
+    - restart kube services
+    - daemon realod
 
 - copy: >
     src="{{ kube_binaries_dir }}/{{ item }}"
     dest="/usr/bin/{{ item }}"
     mode=0744
   with_items: "{{binaries}}"
+  notify: 
+    - restart kube services
+    - daemon realod
 
-- copy: src="{{item}}.conf" dest="/etc/init/{{item}}.conf"
+- copy: src="{{item}}.service" dest="/lib/systemd/system/{{item}}.service"
   with_items: "{{services}}"
+  notify: 
+    - restart kube services
+    - daemon realod
 
 - template: src="{{item}}.j2" dest="/etc/default/{{item}}"
   with_items: "{{services}}"
+  notify: 
+    - restart kube services
+    - daemon realod
 
-- service: name="{{item}}" state=started
+- service: name="{{item}}" state=started enabled=yes
   with_items: "{{services}}"

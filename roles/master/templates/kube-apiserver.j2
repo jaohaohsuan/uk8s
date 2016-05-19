@@ -1,10 +1,10 @@
-KUBE_APISERVER_OPTS="--etcd-servers={{etcd_endpoints}} 
-  --allow-privileged=true
-  --service-cluster-ip-range={{ service_cluster_ip_range }}
-  --tls-cert-file=/srv/kubernetes/server.crt
-  --tls-private-key-file=/srv/kubernetes/server.key 
-  --client-ca-file=/srv/kubernetes/ca.crt 
-  --token-auth-file=/srv/kubernetes/known_tokens.csv
-  --basic-auth-file=/srv/kubernetes/known_basic_auth.csv
-  --admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota
+KUBE_APISERVER_OPTS="--etcd-servers={{etcd_endpoints}} \
+  --allow-privileged=true \
+  --service-cluster-ip-range={{ service_cluster_ip_range }} \
+  --tls-cert-file=/srv/kubernetes/server.crt \
+  --tls-private-key-file=/srv/kubernetes/server.key \
+  --client-ca-file=/srv/kubernetes/ca.crt \
+  --token-auth-file=/srv/kubernetes/known_tokens.csv \
+  --basic-auth-file=/srv/kubernetes/known_basic_auth.csv \
+  --admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota \
   --bind-address={{ private_host_ipv4 }} --secure-port=443"

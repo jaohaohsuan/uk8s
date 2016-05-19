@@ -49,9 +49,19 @@ Vagrant.configure(2) do |config|
   config.vm.define "kube-master" do |n|
     n.vm.hostname = "kube-master"
     n.vm.network "private_network", ip: "10.168.10.80", :netmask => "255.255.255.0"
-    n.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)"
     n.vm.provider :virtualbox do |vb, override|
      set_vbox(vb, override, 1024)
+    end
+  end
+
+  config.vm.define "es" do |n|
+    n.vm.hostname = "es"
+    n.vm.network "public_network"
+    n.vm.network "forwarded_port", guest: 9200, host: 9200
+    n.vm.network "forwarded_port", guest: 9300, host: 9300
+    n.vm.network "private_network", ip: "10.168.10.70", :netmask => "255.255.255.0"
+    n.vm.provider :virtualbox do |vb, override|
+     set_vbox(vb, override, 2048)
     end
   end
 
@@ -63,7 +73,6 @@ Vagrant.configure(2) do |config|
     config.vm.define "#{name}" do |n|
       n.vm.hostname = name
       n.vm.network "private_network", ip: "10.168.10.#{10+i}", :netmask => "255.255.255.0"
-      n.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)"
       n.vm.provider :virtualbox do |vb, override|
         set_vbox(vb, override, 2048)
       end
@@ -71,11 +80,12 @@ Vagrant.configure(2) do |config|
   end
 
   groups = {
+    :dev => ["es"],
     :etcd => ["kube-master"],
     :masters => ["kube-master"],
     :nodes => nodes,
     :glusters => glusters,
-    :'all_groups:children' => ["etcd", "masters", "nodes", "glusters"]
+    :'all_groups:children' => ["dev", "etcd", "masters", "nodes", "glusters"]
   }
 
   config.vm.provision :ansible do |ansible|

@@ -1,0 +1,12 @@
+[Unit]
+Description=kube-proxy
+After=kube-apiserver.service
+
+[Service]
+EnvironmentFile=-/etc/default/%p
+ExecStart=/usr/bin/kube-proxy $KUBE_PROXY_OPTS
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

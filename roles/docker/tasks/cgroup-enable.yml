@@ -19,11 +19,11 @@
 
 - name: waiting for server to come back
   local_action: >
-    wait_for host={{ ansible_ssh_host | default(inventory_hostname) }}
-    state=started
-    port=22
-    delay=30
-    timeout=300
-    connect_timeout=15
+      wait_for host={{ ansible_ssh_host | default(inventory_hostname) }}
+      state=started
+      port=22
+      delay=120
+      timeout=600
+      connect_timeout=30
   become: no
   when: edit_grub.changed

@@ -3,13 +3,13 @@
 - name: download Kubernetes github release
   local_action:
     get_url
-      url=https://github.com/kubernetes/kubernetes/releases/download/{{ kube_relase_ver }}/kubernetes.tar.gz
-      checksum=md5:c0ce9e6150e9d7a19455db82f3318b4c
-      dest="{{local_download_dir}}/kubernetes-{{ kube_relase_ver }}.tar.gz"
+      url=https://github.com/kubernetes/kubernetes/releases/download/{{ kube_release_ver }}/kubernetes.tar.gz
+      checksum="{{kube_release_checksum}}"
+      dest="{{local_download_dir}}/kubernetes-{{ kube_release_ver }}.tar.gz"
 
 - local_action:
     unarchive
-      src="{{local_download_dir}}/kubernetes-{{ kube_relase_ver }}.tar.gz"
+      src="{{local_download_dir}}/kubernetes-{{ kube_release_ver }}.tar.gz"
       dest="{{local_download_dir}}/"
       creates="{{local_download_dir}}/kubernetes/README.md"
       copy=no

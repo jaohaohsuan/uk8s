@@ -16,6 +16,7 @@
       creates="{{local_download_dir}}/flannel-{{ flannel_version }}/flanneld"
   become: no
   run_once: true
+  name: "extract flannel-{{ flannel_version }}-linux-amd64.tar.gz"
 
 - name: "copy binaries to /usr/bin"
   copy:
@@ -24,20 +25,27 @@
     mode: "0754"
   with_items:
     - flanneld
+    - mk-docker-opts.sh
 
-- copy: src=flanneld.conf dest=/etc/init
-  name: copy to upstart script
+- copy: src=flannel.service dest=/lib/systemd/system
+  name: install flannel service
+
+- template: src=flannel.j2 dest=/etc/default/flannel
+  name: copy environment file /etc/default/flannel
+
+- file: path=/etc/systemd/system/docker.service.d state=directory mode=0755
+  name: docker drop-ins directory must be present
+
+- copy: src=flannel.conf dest=/etc/systemd/system/docker.service.d/flannel.conf mode=0755
+  name: add flannel.conf drop-ins
+
+- service: name=flannel state=started enabled=yes
+
+- shell: |
+    ip link set docker0 down &>2 || true
+    brctl delbr docker0 down &>2 || true
+  name: clean up docker0
+  become: yes
   notify:
-    - service restart flanneld
-    - service restart docker
-
-- template: src=flanneld.j2 dest=/etc/default/flanneld
-  name: config
-
-- service: name=flanneld state=started
-  register: flanneld_started
-
-- service: name=docker state=restarted
-  when: flanneld_started.changed
-
-- debug: var=flanneld_started
+    - restart flannel
+    - daemon realod

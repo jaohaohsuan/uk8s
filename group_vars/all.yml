@@ -2,7 +2,7 @@
 
 dns_domain: cluster.local
 
-private_network_iface: eth1
+private_network_iface: eno1
 
 flannel_network: "172.16.0.0/16"
 #host-gw
@@ -15,8 +15,8 @@ service_cluster_ip_range: "10.254.0.0/16"
 dns_server: "{{ service_cluster_ip_range|ipaddr('net')|ipaddr(10)|ipaddr('address') }}"
 kube_service_ip: "{{ service_cluster_ip_range|ipaddr('net')|ipaddr(1)|ipaddr('address') }}"
 
-etcd_endpoints: "{% for node in groups['masters'] %}http://{{ node }}:2379{% if not loop.last %},{% endif %}{% endfor %}"
+etcd_endpoints: "{% for node in groups['masters'] %}http://{{hostvars[node]['ansible_' + private_network_iface].ipv4.address}}:2379{% if not loop.last %},{% endif %}{% endfor %}"
 
 # gluster volumes
 registry_vol: registry2
-gluster_volume_names: "[ 'elasticsearch', '{{registry_vol}}' ]"
+gluster_volume_names: "[ 'elasticsearch', '{{registry_vol}}', 'mongodb', 'cassandra3' ]"

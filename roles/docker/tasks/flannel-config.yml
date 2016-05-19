@@ -1,16 +1,17 @@
 ---
 
-- lineinfile: dest=/etc/init/docker.conf regexp="^start\s*on\s*.*" line="start on started flanneld" backup=yes
+# - lineinfile: dest=/etc/init/docker.conf regexp="^start\s*on\s*.*" line="start on started flanneld" backup=yes
 
-- lineinfile: dest=/etc/init/docker.conf regexp="^stop\s*on\s*.*" line="stop on stopping flanneld" backup=yes
+# - lineinfile: dest=/etc/init/docker.conf regexp="^stop\s*on\s*.*" line="stop on stopping flanneld" backup=yes
 
-- lineinfile: 
-    dest: /etc/default/docker 
-    regexp: "^DOCKER_OPTS=.*" 
-    line: 'DOCKER_OPTS="--bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU} --ip-masq=${FLANNEL_IPMASQ} --insecure-registry gcr.io --insecure-registry quay.io"'
+# - lineinfile: 
+#     dest: /etc/default/docker 
+#     regexp: "^DOCKER_OPTS=.*" 
+#     line: 'DOCKER_OPTS="--bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU} --ip-masq=${FLANNEL_IPMASQ} --insecure-registry gcr.io --insecure-registry quay.io"'
 
 - lineinfile:
-    dest: /etc/default/docker
-    regexp: "/run/flannel/subnet.env"
-    line: ". /run/flannel/subnet.env"
-    insertbefore: "^DOCKER_OPTS=.*"
+    dest: "/lib/systemd/system/docker.service"
+    backrefs: yes
+    regexp: "^ExecStart=/usr/bin/docker daemon -H fd://"
+    line: "ExecStart=/usr/bin/docker daemon -H fd:// $DOCKER_OPTS"
+  name: add $DOCKER_OPTS to docker.service ExecStart

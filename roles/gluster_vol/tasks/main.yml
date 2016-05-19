@@ -10,6 +10,7 @@
 #
 - set_fact:
     brick_path: "/data/brick/"
+    gluster_endpoints: "{% for node in groups['masters'] %}{{hostvars[node]['ansible_' + private_network_iface].ipv4.address}}{% if not loop.last %},{% endif %}{% endfor %}"
 
 - name: Create mount folder and brick
   file: "path={{ brick_path + item[0] }} state=directory mode=0775"
@@ -35,7 +36,7 @@
     name: "{{ item }}"
     brick: "{{ brick_path + item }}"
     replicas: 0
-    cluster: "{{ groups.glusters | join(',') }}"
+    cluster: "{{ gluster_endpoints }}"
     force: yes
   run_once: yes
   become: yes

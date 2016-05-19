@@ -1,7 +1,7 @@
 ---
 
-- name: Copy GlusterFS package to remote machines
-  copy: src=files dest=/tmp/ mode=0744
+# - name: Copy GlusterFS package to remote machines
+#   copy: src=files dest=/tmp/ mode=0744
 
 - name: Check if GlusterFS is installed
   shell: glusterfs -V
@@ -10,18 +10,17 @@
   ignore_errors: true
 
 - name: Install all GlusterFS packages
-  shell: dpkg -i * chdir=/tmp/files
-  when: gnode_result.rc != 0
+  apt: name=glusterfs-server 
 
 - service: name=glusterfs-server state=started enabled=yes
 
-- name: Copy GlusterFS client and dependency package to kubernetes node machines.
-  copy: "src=roles/gluster/files/{{ item[1] }} dest=/tmp/gluster_client/ mode=0744"
-  delegate_to: "{{ item[0] }}"
-  with_nested:
-    - "{{ groups.nodes }}"
-    - [ 'glusterfs-client_3.6.9.deb', 'glusterfs-common_3.6.9.deb', 'libaio1_0.3.109.deb', 'libdevmapper-event_1.02.1.deb', 'libibverbs1_1.1.7.deb', 'liblvm2app2_2.02.98.deb', 'librdmacm1_1.0.16.deb', 'attr1_2.4.47.deb' ]
-  run_once: true
+# - name: Copy GlusterFS client and dependency package to kubernetes node machines.
+#   copy: "src=roles/gluster/files/{{ item[1] }} dest=/tmp/gluster_client/ mode=0744"
+#   delegate_to: "{{ item[0] }}"
+#   with_nested:
+#     - "{{ groups.nodes }}"
+#     - [ 'glusterfs-client_3.6.9.deb', 'glusterfs-common_3.6.9.deb', 'libaio1_0.3.109.deb', 'libdevmapper-event_1.02.1.deb', 'libibverbs1_1.1.7.deb', 'liblvm2app2_2.02.98.deb', 'librdmacm1_1.0.16.deb', 'attr1_2.4.47.deb' ]
+#   run_once: true
 
 - name: Check if GlusterFS is installed
   shell: glusterfs -V
@@ -35,7 +34,7 @@
   
 - name: Install Gluster native client on kube node
   register: install_result
-  shell: dpkg -i * chdir=/tmp/gluster_client/
+  apt: name=glusterfs-client
   delegate_to: "{{ item }}"
   with_items:
     - "{{ groups.nodes }}"
