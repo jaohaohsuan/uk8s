@@ -1,7 +1,7 @@
 ---
 
-- name: restart flannel
-  service: name=flannel state=restarted
+- name: restart docker
+  service: name=docker state=restarted
 
 - name: daemon realod
   command: "systemctl daemon-reload"

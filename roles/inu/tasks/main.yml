@@ -30,7 +30,7 @@
   when: loglevel == 'debug'
 
 - uri: |
-    url={{ es_address }}/_template/tmeplate1
+    url={{ es_address }}/_template/template1
     method=PUT
     body_format=json
     HEADER_Content-Type=application/json

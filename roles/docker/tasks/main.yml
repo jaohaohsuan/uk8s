@@ -6,6 +6,7 @@
 - command: which docker
   register: docker_exist
   changed_when: false
+  ignore_errors: true
 
 - shell: |
     curl -fsSL https://get.docker.com/ | sh
@@ -14,7 +15,6 @@
   when: docker_exist.rc != 0
 
 - include: "flannel-config.yml"
-  when: docker_exist.rc == 0
   
 - user: name={{ ansible_user }} group=docker
   name: "add {{ ansible_user }} to docker group"

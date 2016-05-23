@@ -41,11 +41,14 @@
 
 - service: name=flannel state=started enabled=yes
 
+- user: name=inu groups=docker append=yes
+  become: yes
+
 - shell: |
     ip link set docker0 down &>2 || true
     brctl delbr docker0 down &>2 || true
   name: clean up docker0
   become: yes
   notify:
-    - restart flannel
     - daemon realod
+    - restart docker
