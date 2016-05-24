@@ -15,6 +15,7 @@
   when: docker_exist.rc != 0
 
 - include: "flannel-config.yml"
-  
-- user: name={{ ansible_user }} group=docker
+
+- user: name=inu groups=docker append=yes
+  become: yes
   name: "add {{ ansible_user }} to docker group"
