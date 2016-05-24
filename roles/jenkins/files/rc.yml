@@ -15,7 +15,8 @@
       spec: 
         containers: 
           - name: "jenkins"
-            image: "csanchez/jenkins-kubernetes:latest"
+            image: "jaohaohsuan/kubernetes-plugin:latest"
+            imagePullPolicy: Always
             ports: 
               - containerPort: 8080
               - containerPort: 50000
