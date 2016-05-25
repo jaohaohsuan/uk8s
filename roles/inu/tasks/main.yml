@@ -6,6 +6,7 @@
 - shell: |
     which kubectl
   ignore_errors: yes
+  become: yes
   register: shell_result
 
 - shell: |
@@ -15,6 +16,7 @@
     | cut -d ',' -f 1
   register: k8s_result
   changed_when: false
+  become: yes
   when: shell_result.rc == 0
 
 - set_fact:
