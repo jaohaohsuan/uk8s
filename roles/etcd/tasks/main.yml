@@ -8,17 +8,22 @@
     regexp='^#\sETCD_LISTEN_CLIENT_URLS=' 
     backrefs=yes 
     line='ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"'
+  register: etcd_listen_client_urls
 
 - lineinfile: >
     dest=/etc/default/etcd
     regexp='^#\sETCD_ADVERTISE_CLIENT_URLS=' 
     backrefs=yes 
     line='ETCD_ADVERTISE_CLIENT_URLS="http://{{private_host_ipv4}}:2379"'
+  register: etcd_advertise_client_urls
 
 - command: systemctl daemon-reload
+  when: (etcd_listen_client_urls.changed) or (etcd_advertise_client_urls.changed)
 
 - service: name=etcd state=restarted
+  when: (etcd_listen_client_urls.changed) or (etcd_advertise_client_urls.changed)
 
 - wait_for: 'host="{{private_host_ipv4}}" port=2379 delay=3'
   name: "wait for {{private_host_ipv4}}"
+
 - include: "flannel-config.yml"

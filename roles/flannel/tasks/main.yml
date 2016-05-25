@@ -47,5 +47,5 @@
   name: clean up docker0
   become: yes
   notify:
-    - restart flannel
     - daemon realod
+    - restart docker

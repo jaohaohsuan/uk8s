@@ -1,0 +1,10 @@
+---
+
+- file: path=/tmp/jenkins state=directory
+- copy: src=service.yml dest=/tmp/jenkins/service.yml
+- copy: src=rc.yml dest=/tmp/jenkins/rc.yml
+
+- name: apply jenkins service
+  shell: |
+    kubectl apply -f /tmp/jenkins
+  become: yes

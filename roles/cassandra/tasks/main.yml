@@ -1,0 +1,17 @@
+---
+
+- file: path=/github/cassandra-kubernetes state=directory
+ 
+- git: repo=https://github.com/jaohaohsuan/cassandra-kubernetes.git
+       dest=/github/cassandra-kubernetes
+       version={{ cassandra_kubernetes_version }}
+  name: "git clone jaohaohsuan/cassandra-kubernetes:{{ cassandra_kubernetes_version }}"
+
+
+# - command: "kubectl apply -f {{item}}"
+#   args:
+#     chdir: /github/cassandra-kubernetes
+#   with_items:
+#     - "cassandra-peer-service.yml"
+#   changed_when: false
+
