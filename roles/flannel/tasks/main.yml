@@ -42,9 +42,14 @@
 - service: name=flannel state=started enabled=yes
 
 - shell: |
-    ip link set docker0 down &>2 || true
-    brctl delbr docker0 down &>2 || true
+  docker run busybox netstat -r | grep `ip a | grep flannel\.[0-9]$ | awk '{print $2}' | sed 's/\/.*//'`
+  register: docker0_result
+
+- shell: |
+    ip link set docker0 down 2>&1 || true
+    brctl delbr docker0 down 2>&1 || true
   name: clean up docker0
+  when: docker0_result.rc != 0
   become: yes
   notify:
     - daemon realod
