@@ -19,4 +19,4 @@ etcd_endpoints: "{% for node in groups['masters'] %}http://{{hostvars[node]['ans
 
 # gluster volumes
 registry_vol: registry2
-gluster_volume_names: "[ 'elasticsearch', '{{registry_vol}}', 'mongodb', 'cassandra3', 'jenkins', 'stt-adapter' ]"
+gluster_volume_names: "[ 'elasticsearch', '{{registry_vol}}', 'mongodb', 'cassandra', 'cassandra3', 'jenkins', 'stt-adapter' ]"
