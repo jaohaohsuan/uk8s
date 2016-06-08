@@ -1,0 +1,20 @@
+---
+
+- debug: var=nsenter_path
+- name: Download nsenter source code
+  local_action:
+    shell
+      cd downloads ;
+      curl https://www.kernel.org/pub/linux/utils/util-linux/v2.24/util-linux-2.24.tar.gz | tar -zxf- ;
+  become: no
+  run_once: yes
+
+- name: build nsenter source code
+  local_action:
+    shell
+      cd downloads/util-linux-2.24 ;
+      ./configure --without-ncurses;
+      make nsenter;
+      cp nsenter "{{ nsenter_path }}"
+  become: no
+  run_once: yes
