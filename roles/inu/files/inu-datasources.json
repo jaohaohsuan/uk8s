@@ -1,10 +1,6 @@
 [
   {
-    "type": "ytx",
-    "analyzer": "stt_analyzer"
-  },
-  {
-    "type": "ami-l8k",
+    "type": "amiast",
     "analyzer": "stt_analyzer"
   }
 ]

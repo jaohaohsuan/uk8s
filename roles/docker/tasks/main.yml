@@ -18,6 +18,6 @@
 
 - include: "flannel-config.yml"
 
-- user: name={{ ansible_user }} shell=/usr/bin/fish groups=docker append=yes
+- user: name={{ ansible_user }} shell=/bin/bash groups=docker append=yes
   become: yes
   name: "add {{ ansible_user }} to docker group"
