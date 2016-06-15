@@ -1,0 +1,11 @@
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: apt update
+      raw: sudo apt update -qq
+    - name: install python 2.7
+      raw: sudo apt install -y python2.7
+    - name: install httplib2
+      raw: sudo apt install -y python-httplib2
+    - name: install packages
+      raw: sudo apt install -y fish iftop htop pptp-linux
