@@ -1,0 +1,15 @@
+---
+- set_fact:
+    remote_tmp_dir: "/tmp/web-service"
+    yaml_list:
+      - "deployd-svc.yaml"
+      - "nodejs-api-svc.yaml"
+      - "web-service-deployment.yaml"
+
+- file: path="{{ remote_tmp_dir }}" state=directory
+- copy: src={{item}} dest="{{remote_tmp_dir}}/{{item}}"
+  with_items: "{{yaml_list}}"
+
+- command: "kubectl apply -f {{remote_tmp_dir}}/{{item}}"
+  with_items: "{{yaml_list}}"
+  changed_when: false

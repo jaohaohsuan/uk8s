@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: web-service
+  name: web-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: web-service
+    spec:
+      containers:
+        - image: jheehu/inu-deployd
+          name: deployd
+          env:
+            - name: MONGO_ADDR
+              value: mongo.default.svc.cluster.local:27017
+          ports:
+            - containerPort: 2403
+        - image: jheehu/inu-nodejs-api
+          name: nodejs-api
+          env:
+            - name: ES_ADDR
+              value: elasticsearch.default.svc.cluster.local:9200
+            - name: DEPLOYD_ADDR
+              value: http://deployd.default.svc.cluster.local:2403
+            - name: MONGO_ADDR
+              value: mongo.default.svc.cluster.local:27017
+            - name: AUDIO_PATH
+              value: /data/stt-adapter/Playing
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+              - name: stt-adapter
+                mountPath: /data/stt-adapter
+      volumes:
+        - name: stt-adapter
+          glusterfs:
+            endpoints: glusterfs-cluster
+            path: stt-adapter
+            readOnly: false
