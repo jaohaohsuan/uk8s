@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: mongodb
+  name: mongodb
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mongodb
+    spec:
+      containers:
+      - image: jheehu/inu-mongodb
+        name: mongodb
+        ports:
+        - name: mongodb
+          containerPort: 27017
+        volumeMounts:
+            - name: mongodb
+              mountPath: /data/db
+      volumes:
+        - name: mongodb
+          glusterfs:
+            endpoints: glusterfs-cluster
+            path: mongodb
+            readOnly: false

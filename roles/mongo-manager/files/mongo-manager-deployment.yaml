@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: mongo-manager
+  name: mongo-manager
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mongo-manager
+    spec:
+      containers:
+      - image: jheehu/inu-mongo-manager
+        name: mongo-manager
+        env:
+          - name: API_URI
+            value: "mongo.default.svc.cluster.local:27017"
+          - name: DURATION
+            value: "6"

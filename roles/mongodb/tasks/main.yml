@@ -1,0 +1,14 @@
+---
+- set_fact:
+    remote_temp_dir: "/tmp/mongodb"
+    yaml_list:
+      - "mongo-service.yaml"
+      - "mongo-deployment.yaml"
+
+- file: path="{{ remote_temp_dir }}" state=directory
+- copy: src={{item}} dest="{{remote_temp_dir}}/{{item}}"
+  with_items: "{{yaml_list}}"
+
+- command: "kubectl apply -f {{remote_temp_dir}}/{{item}}"
+  with_items: "{{yaml_list}}"
+  changed_when: false
