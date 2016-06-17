@@ -3,33 +3,21 @@
   become: yes
   tasks:
   roles:
-    #- jenkins
-    #- cassandra
-    #- inu
-    # - etcd
-    # - docker
-    # - flannel
+    #- gluster
+    #- gluster_vol
+    #- etcd
+    #- docker
+    #- flannel
     #- master
     #- node
-    #- gluster
-    - gluster_vol
     #- kube-addons
-    # - etcd
-    # - flannel
-    - master
-    - node
-    # - kube-addons
-    # - kube-addons
-    - kube-addons
-    - jenkins
+    #- jenkins
+    - cassandra
     - elasticsearch
-    #- kube-addons
-    #- gluster_vol
-
-
-
-        # - docker
-    # - etcd
-
-
-
+    - cassandra2
+    - mongodb
+    - mongo-manager
+    - stt-adapter
+    - kong
+    - web-service
+    - inu
