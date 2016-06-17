@@ -3,7 +3,7 @@
 
 - git: repo=https://github.com/jaohaohsuan/kubernetes-elasticsearch-cluster.git
        dest=/github/elasticsearch-cluster
-       version=fc5c8d7ad3f97d71e3e54fcc0e5be704f13ee96e
+       version=f12abb7624aa45fda8c1feaf8008e67d4d73faa7
   become: yes
 
 - command: "kubectl apply -f {{item}}"
