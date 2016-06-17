@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: cassandra
+  name: cassandra
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: cassandra
+    spec:
+      containers:
+      - image: jheehu/inu-cassandra2
+        name: cassandra
+        ports:
+        - name: cassandra
+          containerPort: 27017
+        volumeMounts:
+            - name: cassandra
+              mountPath: /opt/cassandra/data/data
+      volumes:
+        - name: cassandra
+          glusterfs:
+            endpoints: glusterfs-cluster
+            path: cassandra
+            readOnly: false
