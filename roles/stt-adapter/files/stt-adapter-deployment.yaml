@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: stt-adapter
+  name: stt-adapter
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: stt-adapter
+    spec:
+      containers:
+      - image: jheehu/inu-stt-adapter
+        name: stt-adapter
+        env:
+          - name: SSH_USER
+            value: "inu"
+          - name: SSH_PASSWORD
+            value: "inu88888"
+          - name: SSH_HOST
+            value: "192.168.1.100:22"
+          - name: WORK_DIR
+            value: "/home/inu/iNu/SttResult/testdata"
+          - name: LOCAL_DIR
+            value: "/data/stt-adapter"
+          - name: API_URI
+            value: "http://river.default.svc.cluster.local:7879/stt/amiast/"
+          - name: WAIT_TIME
+            value: "300"
+        volumeMounts:
+            - name: stt-adapter
+              mountPath: /data/stt-adapter
+      volumes:
+        - name: stt-adapter
+          glusterfs:
+            endpoints: glusterfs-cluster
+            path: stt-adapter
+            readOnly: false
