@@ -9,7 +9,7 @@
 # step2. create var under your_role/default/main.yml, key name is "gluster_volume_names"
 #
 - set_fact:
-    brick_path: "/disk1/brick/"
+    brick_path: "/data/brick/"
     gluster_endpoints: "{% for node in groups['masters'] %}{{hostvars[node]['ansible_' + private_network_iface].ipv4.address}}{% if not loop.last %},{% endif %}{% endfor %}"
 
 - name: Create mount folder and brick
