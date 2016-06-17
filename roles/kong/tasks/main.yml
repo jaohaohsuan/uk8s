@@ -1,0 +1,70 @@
+---
+- set_fact:
+    remote_temp_dir: "/tmp/kong"
+    yaml_list:
+      - "kong-deployment.yaml"
+      - "kong-svc.yaml"
+    api_list:
+      - "main.json"
+      - "deployd.json"
+      - "nodejs-api.json"
+      - "storedq.json"
+    plugin_list:
+      - "dapi"
+      - "napi"
+      - "storedq-api"
+
+- file: path="{{ remote_temp_dir }}" state=directory
+- copy: src={{item}} dest="{{remote_temp_dir}}/{{item}}"
+  with_items: "{{yaml_list}}"
+
+- name: "create pod: kong"
+  command: "kubectl apply -f {{remote_temp_dir}}/{{item}}"
+  with_items: "{{yaml_list}}"
+  changed_when: false
+
+- name: "ensure kong's pod is running "
+  shell: kubectl get po | grep kong
+  register: result
+  until: "'Running' in result.stdout"
+  changed_when: false
+  retries: 50
+  delay: 10
+
+- name: "get kong's admin port number"
+  shell: kubectl describe svc kong | grep NodePort | grep admin | awk '{print $3}' | awk -F/ '{print $1}'
+  register: kong_result
+  changed_when: false
+
+
+- set_fact:
+    admin_port: "{{kong_result.stdout_lines[0]}}"
+
+  #- name: "ensure kong admin API is running"
+  #  #uri: url="http://127.0.0.1:{{admin_port}}/apis"
+  #  uri: url="http://127.0.0.1:{{admin_port}}/apis"
+  #  register: kong_status
+  #  until: status_code|200
+  #  changed_when: false
+  #  retries: 50
+  #  delay: 10
+
+- name: "add Kong API"
+  uri:
+    url: "http://127.0.0.1:{{admin_port}}/apis"
+    method: POST
+    body_format: json
+    HEADER_Content-Type: application/json
+    body: "{{ lookup('file', 'files/api/{{item}}') }}"
+    status_code: 201,409
+  with_items: "{{api_list}}"
+
+- name: "add Kong plugin"
+  uri:
+    url: "http://127.0.0.1:{{admin_port}}/apis/{{item}}/plugins"
+    method: POST
+    body_format: json
+    HEADER_Content-Type: application/json
+    body: "{{ lookup('file', 'files/plugin/{{item}}.json') }}"
+    status_code: 201,409
+  with_items: "{{plugin_list}}"

@@ -1,0 +1,8 @@
+{
+    "upstream_url": "http://deployd.default.svc.cluster.local:2403",
+    "strip_request_path": true,
+    "request_path": "",
+    "preserve_host": false,
+    "name": "main",
+    "request_host": "deployd.default.svc.cluster.local"
+}

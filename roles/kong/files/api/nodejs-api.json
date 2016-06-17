@@ -1,0 +1,8 @@
+{
+    "name": "napi",
+    "request_host": "nodejs-api.default.svc.cluster.local",
+    "upstream_url": "http://nodejs-api.default.svc.cluster.local:8080",
+    "preserve_host": false,
+    "strip_request_path": "true",
+    "request_path": "/napi"
+}

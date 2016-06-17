@@ -1,0 +1,8 @@
+{
+    "name": "storedq-api",
+    "upstream_url": "http://storedq-api.default.svc.cluster.local:7879/sapi",
+    "request_path": "/sapi",
+    "request_host": "storedq-api.default.svc.cluster.local",
+    "preserve_host": true,
+    "strip_request_path": true
+}

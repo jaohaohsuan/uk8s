@@ -1,0 +1,9 @@
+{
+    "name": "http-log",
+    "config" : {
+        "http_endpoint": "http://nodejs-api.default.svc.cluster.local:8080/auditLogs",
+        "method": "POST",
+        "timeout": 100,
+        "keepalive": 1000
+    }
+}

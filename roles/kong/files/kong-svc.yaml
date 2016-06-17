@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: kong
+  name: kong
+spec:
+  type: NodePort
+  ports:
+    - name: normal
+      port: 8000
+      protocol: TCP
+    - name: admin
+      port: 8001
+      protocol: TCP
+  selector:
+    name: kong

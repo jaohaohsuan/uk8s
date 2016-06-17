@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: kong
+  name: kong
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: kong
+    spec:
+      containers:
+      - image: jheehu/inu-kong
+        name: kong
+        env:
+          - name: DATABASE
+            value: cassandra
+          - name: CASSANDRA_ADDR
+            value: cassandra.default.svc.cluster.local
+        ports:
+        - name: normal
+          containerPort: 8000
+        - name: adminapi
+          containerPort: 8001

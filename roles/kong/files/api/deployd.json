@@ -1,0 +1,7 @@
+{
+    "upstream_url": "http://deployd.default.svc.cluster.local:2403",
+    "strip_request_path": true,
+    "request_path": "/dapi",
+    "preserve_host": false,
+    "name": "dapi"
+}
