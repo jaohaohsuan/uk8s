@@ -8,4 +8,4 @@
     - name: install httplib2
       raw: sudo apt install -y python-httplib2
     - name: install packages
-      raw: sudo apt install -y fish iftop htop pptp-linux
+      raw: sudo apt install -y fish iftop htop pptp-linux bridge-utils
