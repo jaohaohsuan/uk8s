@@ -3,6 +3,7 @@
 
 - git: repo=https://github.com/jaohaohsuan/kubernetes-elasticsearch-cluster.git
        dest=/github/elasticsearch-cluster
+       force=yes
        version=a110e244e9d559d990a211253d18d6f8b4fe6f19
   become: yes
 
