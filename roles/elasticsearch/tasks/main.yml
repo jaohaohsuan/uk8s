@@ -1,42 +1,69 @@
 ---
-- file: path=/github/elasticsearch-cluster state=directory
+- file: path=/uk8s/elasticsearch-cluster state=directory mode=0644
+  name: ensure /uk8s/elasticsearch-cluster exist
 
-- git: repo=https://github.com/jaohaohsuan/kubernetes-elasticsearch-cluster.git
-       dest=/github/elasticsearch-cluster
-       force=yes
-       version=a110e244e9d559d990a211253d18d6f8b4fe6f19
-  become: yes
+- copy: src=service-account.yaml dest=/uk8s/elasticsearch-cluster/service-account.yaml mode=0644
+  name: cp service-account.yaml
+
+- copy: src=es-discovery-svc.yaml dest=/uk8s/elasticsearch-cluster/es-discovery-svc.yaml mode=0644
+  name: cp es-discovery-svc.yaml
+
+- copy: src=es-svc.yaml dest=/uk8s/elasticsearch-cluster/es-svc.yaml mode=0644 mode=0644
+  name: cp es-svc.yaml
+
+- template: src="es-client-dp.yaml.j2" dest="/uk8s/elasticsearch-cluster/es-client-dp.yaml"
+  name: gen es-client-dp.yaml
+
+- template: src="es-data-dp.yaml.j2" dest="/uk8s/elasticsearch-cluster/es-data-dp.yaml"
+  name: gen es-data-dp.yaml
+
+- template: src="es-master-dp.yaml.j2" dest="/uk8s/elasticsearch-cluster/es-master-dp.yaml"
+  name: gen es-master-dp.yaml
 
 - command: "kubectl apply -f {{item}}"
   args:
-    chdir: /github/elasticsearch-cluster
+    chdir: /uk8s/elasticsearch-cluster
   with_items:
     - "service-account.yaml"
     - "es-discovery-svc.yaml"
     - "es-svc.yaml"
-    - "es-master-rc.yaml"
+    - "es-master-dp.yaml"
   changed_when: false
+  name: deploy master node
 
 - shell: |
-    kubectl get po | grep es-master
+    kubectl get po --no-headers=true | grep es-master
   register: result
   until: "'Running' in result.stdout"
   changed_when: false
   retries: 1000
   delay: 60
+  name: check master node up & running
 
-- command: kubectl apply -f es-client-rc.yaml
+- command: kubectl apply -f es-client-dp.yaml
   args:
-    chdir: /github/elasticsearch-cluster
+    chdir: /uk8s/elasticsearch-cluster
+  name: deploy client node
 
 - shell: |
-    kubectl get po | grep es-client
+    kubectl get po --no-headers=true | grep es-client
   register: result
   until: "'Running' in result.stdout"
   changed_when: false
   retries: 1000
-  delay: 60
+  delay: 20
+  name: check client node up & running
 
-- command: kubectl apply -f es-data-rc.yaml
+- command: kubectl apply -f es-data-dp.yaml
   args:
-    chdir: /github/elasticsearch-cluster
+    chdir: /uk8s/elasticsearch-cluster
+  name: deploy data node
+
+- shell: |
+    kubectl get po --no-headers=true | grep es-data
+  register: result
+  until: "'Running' in result.stdout"
+  changed_when: false
+  retries: 1000
+  delay: 20
+  name: check data node up & running
