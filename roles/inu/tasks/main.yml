@@ -22,6 +22,7 @@
 - set_fact:
     es_address: "http://{{ k8s_result.stdout }}"
   when: shell_result.rc == 0
+  name: set elasticsearch address to {{ k8s_result.stdout }}
 
 - uri: |
     url={{ es_address }}
@@ -48,7 +49,8 @@
   register: api_result
   name: HEAD stored-query index
 
-- debug: msg="{{ lookup('template', 'stored-query.settings.json.j2') }}"
+#- debug: var=inu_datasources
+#- debug: msg="{{ lookup('template', 'stored-query.settings.json.j2') }}"
 
 - uri: |
     url={{ es_address }}/stored-query
@@ -99,6 +101,10 @@
     status_code=200
   with_items: "{{ inu_datasources }}"
 
-- debug: var=api_result
-  when: loglevel == 'debug'
+# - debug: |
+#     msg={{ lookup('template', 'test.json.j2') }}
+#   with_items: "{{ inu_datasources }}"
+
+# - debug: var=api_result
+#   when: loglevel == 'debug'
 
