@@ -20,15 +20,14 @@ spec:
           - name: SSH_PASSWORD
             value: "inu88888"
           - name: SSH_HOST
+            #value: "10.8.128.90:22"
             value: "192.168.1.100:22"
-          - name: WORK_DIR
-            value: "/home/inu/iNu/SttResult/testdata"
           - name: LOCAL_DIR
             value: "/data/stt-adapter"
           - name: API_URI
             value: "http://river.default.svc.cluster.local:7879/stt/amiast/"
           - name: WAIT_TIME
-            value: "300"
+            value: "60"
         volumeMounts:
             - name: stt-adapter
               mountPath: /data/stt-adapter
