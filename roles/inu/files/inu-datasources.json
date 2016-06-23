@@ -1,6 +1,18 @@
 [
   {
     "type": "amiast",
-    "analyzer": "stt_analyzer"
+    "analyzer": "stt_analyzer",
+    "properties": [
+      { 
+      	"name": "year",
+      	"type": "integer",
+      	"index": "not_analyzed"
+  	  },
+      { 
+        "name": "startTime",
+        "type": "date",
+        "index": "not_analyzed"
+      }
+    ]
   }
 ]

@@ -1,3 +1,4 @@
 inu_datasources: "{{ lookup('file','inu-datasources.json') }}"
 es_analysis: "{{ lookup('file','analysis.json') }}"
-es_address: "http://172.28.128.3:9200"
+# only for test
+es_address: "http://10.0.2.15:9200"
