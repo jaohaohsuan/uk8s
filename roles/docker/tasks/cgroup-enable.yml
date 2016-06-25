@@ -2,6 +2,9 @@
 #- apt: name=linux-generic-lts-vivid state=present update_cache=yes
 #  name: install newer kernel
 
+- set_fact:
+    private_host_ipv4: "{{ hostvars[inventory_hostname]['ansible_' + private_network_iface]['ipv4']['address'] }}"
+
 - lineinfile: dest=/etc/default/grub state=present line="GRUB_CMDLINE_LINUX=\"cgroup_enable=memory swapaccount=1\"" regexp="cgroup_enable"
   register: edit_grub
   name: add support memory limit
@@ -11,17 +14,16 @@
   name: "update-grub"
 
 - name: restart machine
-  command: shutdown -r now
+  shell: sleep 2 && reboot
   async: 0
   poll: 0
   ignore_errors: true
   when: edit_grub.changed
 
-- name: waiting for server to come back
+- name: "waiting for server {{ private_host_ipv4 }} to come back"
   local_action: >
-      wait_for host={{ ansible_ssh_host | default(inventory_hostname) }}
+      wait_for host={{ private_host_ipv4 }}
       state=started
-      port=22
       delay=300
       timeout=600
       connect_timeout=30
