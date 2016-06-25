@@ -42,8 +42,11 @@
 - service: name=flannel state=started enabled=yes
 
 - shell: |
-    docker run busybox netstat -r | grep `ip a | grep flannel\.[0-9]$ | awk '{print $2}' | sed 's/\/.*//'`
+    docker run --rm busybox netstat -r | grep `ip a | grep flannel\.[0-9]$ | awk '{print $2}' | sed 's/\/.*//'`
+  changed_when: docker0_result.rc != 0
   register: docker0_result
+
+#- debug: var=docker0_result
 
 - shell: |
     ip link set docker0 down 2>&1 || true
