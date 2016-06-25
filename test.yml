@@ -1,0 +1,19 @@
+- hosts: all
+  tasks:
+    - set_fact:
+        private_host_ipv4: "{{ hostvars[inventory_hostname]['ansible_' + private_network_iface]['ipv4']['address'] }}"
+    
+    - name: restart machine
+      shell: reboot
+      async: 0
+      poll: 0
+      ignore_errors: true
+      become: yes
+
+    - name: "server {{ private_host_ipv4 }} is down "
+      local_action: wait_for port=22 host={{ private_host_ipv4 }} state=stopped delay=3
+      become: no
+
+    - name: "waiting for server {{ private_host_ipv4 }} to come back"
+      local_action: wait_for port=22 host={{ private_host_ipv4 }} state=started delay=5
+      become: no
