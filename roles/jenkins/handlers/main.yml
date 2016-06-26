@@ -1,0 +1,5 @@
+---
+- name: safe-restart jenkins
+  become: yes
+  shell: |
+    kubectl exec -it {{ jenkins_pod }} -- java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://127.0.0.1:8080/ safe-restart
