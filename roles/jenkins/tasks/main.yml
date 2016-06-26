@@ -8,3 +8,56 @@
   shell: |
     kubectl apply -f /tmp/jenkins
   become: yes
+  register: apply_jenkins_result
+  changed_when: false
+
+- debug: var=apply_jenkins_result
+
+- name: find jenkins pod
+  shell: |
+    kubectl get po -l name=jenkins --no-headers | awk '{ print $1}'
+  register: get_jenkins_po
+  until: "get_jenkins_po.rc == 0"
+  changed_when: false
+  retries: 1000
+  delay: 5
+  become: yes
+
+- set_fact:
+    jenkins_pod: "{{ get_jenkins_po.stdout }}"
+    jenkins_pre_install_plugins: "[ 'ansicolor' ]"
+
+- name: list plugins which need update
+  become: yes
+  shell: |
+    kubectl exec -it {{ jenkins_pod }} -- java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://127.0.0.1:8080/ list-plugins | grep -e ')$' | awk '{ print $1 }'
+  register: jenkins_plugins
+  changed_when: "{{ jenkins_plugins.stdout_lines | length > 0 }}"
+
+- debug: var=jenkins_plugins.stdout_lines
+
+- name: install plugins
+  become: yes
+  shell: |
+    kubectl exec -it {{ jenkins_pod }} -- java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://127.0.0.1:8080/ install-plugin {{ item }}
+  register: jenkins_plugins_installation_result
+  # when: "{{ item not in jenkins_plugins.stdout_lines }}"
+  with_items: "{{ jenkins_pre_install_plugins }}"
+
+- debug: var=jenkins_plugins_installation_result
+
+
+- name: upgrade plugins
+  become: yes
+  shell: |
+    kubectl exec -it {{ jenkins_pod }} -- java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://127.0.0.1:8080/ install-plugin {{ item }}
+  with_items: "{{ jenkins_plugins.stdout_lines }}"
+
+- name: safe-restart jenkins master
+  become: yes
+  shell: |
+    kubectl exec -it {{ jenkins_pod }} -- java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://127.0.0.1:8080/ safe-restart
+  when: ( jenkins_plugins.stdout_lines | length > 0 ) or
+        ( jenkins_plugins_installation_result.results | length > 0 )
+
+
