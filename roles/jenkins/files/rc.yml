@@ -17,6 +17,9 @@
           - name: "jenkins"
             image: "jaohaohsuan/kubernetes-plugin:latest"
             imagePullPolicy: Always
+            env:
+              - name: JAVA_OPTS
+                value: -Dorg.apache.commons.jelly.tags.fmt.timeZone=Asia/Taipei
             ports: 
               - containerPort: 8080
               - containerPort: 50000
