@@ -150,34 +150,11 @@
             {
                 "name": "weekDay",
                 "type": "integer",
-                "fields": [
-                    "term",
-                    "terms",
-                    "range"
-                ],
-                "aggregations": {
-                    "histogram": {
-                        "interval": null,
-                        "field": "weekDay"
-                    },
-                    "range": {
-                        "field": "weekDay",
-                        "ranges": [
-                            {
-                                "key": "",
-                                "from": null,
-                                "to": null
-                            }
-                        ]
-                    },
-                    "terms": [
+                "index": "not_analyzed"
+            },
                         {
-                            "title": "",
-                            "field": "weekDay",
-                            "value": null
-                        }
-                    ]
-                },
+                "name": "weekNum",
+                "type": "integer",
                 "index": "not_analyzed"
             },
             {
