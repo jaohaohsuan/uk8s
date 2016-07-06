@@ -14,6 +14,7 @@ spec:
       containers:
         - image: jheehu/inu-deployd
           name: deployd
+          imagePullPolicy: IfNotPresent
           env:
             - name: MONGO_ADDR
               value: mongo.default.svc.cluster.local:27017
@@ -21,6 +22,7 @@ spec:
             - containerPort: 2403
         - image: jheehu/inu-nodejs-api
           name: nodejs-api
+          imagePullPolicy: IfNotPresent
           env:
             - name: ES_ADDR
               value: elasticsearch.default.svc.cluster.local:9200
