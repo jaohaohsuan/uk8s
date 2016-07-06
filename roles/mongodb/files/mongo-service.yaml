@@ -5,6 +5,7 @@ metadata:
     name: mongodb
   name: mongo
 spec:
+  type: NodePort
   ports:
     - port: 27017
       protocol: TCP
