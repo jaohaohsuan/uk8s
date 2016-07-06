@@ -1,4 +1,4 @@
-master1 ansible_host=192.168.40.50 ansible_user=inu
+master1 ansible_host=192.168.1.100 ansible_user=inu ansible_port=22 private_network_iface=eno1
 
 [xenials]
 master1
