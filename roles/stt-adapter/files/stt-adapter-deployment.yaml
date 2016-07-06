@@ -17,12 +17,12 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
           - name: SSH_USER
-            value: "inu"
+            value: ""
           - name: SSH_PASSWORD
-            value: "inu88888"
+            value: ""
           - name: SSH_HOST
             #value: "10.8.128.90:22"
-            value: "192.168.1.100:22"
+            value: ""
           - name: LOCAL_DIR
             value: "/data/stt-adapter"
           - name: API_URI
