@@ -266,6 +266,16 @@
                 ],
                 "aggregations": {},
                 "index": "not_analyzed"
+            },
+            {
+                "name": "endStatus",
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            {
+                "name": "projectName",
+                "type": "string",
+                "index": "not_analyzed"
             }
     ]
   }
