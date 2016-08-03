@@ -7,144 +7,26 @@
             {
                 "name": "startTime",
                 "type": "date",
-                "fields": [
-                    "term",
-                    "terms",
-                    "range"
-                ],
-                "aggregations": {},
                 "index": "not_analyzed"
             },
             {
                 "name": "year",
                 "type": "integer",
-                "fields": [
-                    "term",
-                    "terms",
-                    "range"
-                ],
-                "aggregations": {
-                    "histogram": {
-                        "interval": null,
-                        "field": "year"
-                    },
-                    "range": {
-                        "field": "year",
-                        "ranges": [
-                            {
-                                "key": "",
-                                "from": null,
-                                "to": null
-                            }
-                        ]
-                    },
-                    "terms": [
-                        {
-                            "title": "",
-                            "field": "year",
-                            "value": null
-                        }
-                    ]
-                },
                 "index": "not_analyzed"
             },
             {
                 "name": "quarter",
                 "type": "integer",
-                "fields": [
-                    "term",
-                    "terms",
-                    "range"
-                ],
-                "aggregations": {
-                    "histogram": {
-                        "interval": null,
-                        "field": "quarter"
-                    },
-                    "range": {
-                        "field": "quarter",
-                        "ranges": [
-                            {
-                                "key": "",
-                                "from": null,
-                                "to": null
-                            }
-                        ]
-                    },
-                    "terms": [
-                        {
-                            "title": "",
-                            "field": "quarter",
-                            "value": null
-                        }
-                    ]
-                },
                 "index": "not_analyzed"
             },
             {
                 "name": "month",
                 "type": "integer",
-                "fields": [
-                    "term",
-                    "terms",
-                    "range"
-                ],
-                "aggregations": {
-                    "histogram": {
-                        "interval": null,
-                        "field": "month"
-                    },
-                    "range": {
-                        "field": "month",
-                        "ranges": [
-                            {
-                                "key": "",
-                                "from": null,
-                                "to": null
-                            }
-                        ]
-                    },
-                    "terms": [
-                        {
-                            "title": "",
-                            "field": "month",
-                            "value": null
-                        }
-                    ]
-                },
                 "index": "not_analyzed"
             },
             {
                 "name": "weekYear",
                 "type": "integer",
-                "fields": [
-                    "term",
-                    "terms",
-                    "range"
-                ],
-                "aggregations": {
-                    "histogram": {
-                        "interval": null,
-                        "field": "weekYear"
-                    },
-                    "range": {
-                        "field": "weekYear",
-                        "ranges": [
-                            {
-                                "key": "",
-                                "from": null,
-                                "to": null
-                            }
-                        ]
-                    },
-                    "terms": [
-                        {
-                            "title": "",
-                            "field": "weekYear",
-                            "value": null
-                        }
-                    ]
-                },
                 "index": "not_analyzed"
             },
             {
@@ -160,111 +42,46 @@
             {
                 "name": "monthDay",
                 "type": "integer",
-                "fields": [
-                    "term",
-                    "terms",
-                    "range"
-                ],
-                "aggregations": {
-                    "histogram": {
-                        "interval": null,
-                        "field": "monthDay"
-                    },
-                    "range": {
-                        "field": "monthDay",
-                        "ranges": [
-                            {
-                                "key": "",
-                                "from": null,
-                                "to": null
-                            }
-                        ]
-                    },
-                    "terms": [
-                        {
-                            "title": "",
-                            "field": "monthDay",
-                            "value": null
-                        }
-                    ]
-                },
                 "index": "not_analyzed"
             },
             {
                 "name": "endTime",
                 "type": "date",
-                "fields": [
-                    "term",
-                    "terms",
-                    "range"
-                ],
-                "aggregations": {},
                 "index": "not_analyzed"
             },
             {
                 "name": "length",
                 "type": "integer",
-                "fields": [
-                    "range"
-                ],
                 "index": "not_analyzed"
             },
             {
                 "name": "agentId",
                 "type": "string",
-                "fields": [
-                    "term",
-                    "terms"
-                ],
-                "aggregations": {},
                 "index": "not_analyzed"
             },
             {
                 "name": "agentName",
                 "type": "string",
-                "fields": [
-                    "term",
-                    "terms"
-                ],
-                "aggregations": {},
                 "index": "not_analyzed"
             },
             {
                 "name": "callDirection",
                 "type": "string",
-                "fields": [
-                    "term"
-                ],
-                "aggregations": {},
                 "index": "not_analyzed"
             },
             {
                 "name": "agentPhoneNo",
                 "type": "string",
-                "fields": [
-                    "term",
-                    "terms"
-                ],
-                "aggregations": {},
                 "index": "not_analyzed"
             },
             {
                 "name": "customerPhoneNo",
                 "type": "string",
-                "fields": [
-                    "term",
-                    "terms"
-                ],
-                "aggregations": {},
                 "index": "not_analyzed"
             },
             {
                 "name": "customerGender",
                 "type": "string",
-                "fields": [
-                    "term"
-                ],
-                "aggregations": {},
                 "index": "not_analyzed"
             },
             {
@@ -275,6 +92,26 @@
             {
                 "name": "projectName",
                 "type": "string",
+                "index": "not_analyzed"
+            },
+            {
+                "name": "mixLongestSilence",
+                "type": "integer",
+                "index": "not_analyzed"
+            },
+            {
+                "name": "r0TotalInterruption",
+                "type": "integer",
+                "index": "not_analyzed"
+            },
+            {
+                "name": "r1TotalInterruption",
+                "type": "integer",
+                "index": "not_analyzed"
+            },
+            {
+                "name": "sumTotalInterruption",
+                "type": "integer",
                 "index": "not_analyzed"
             }
     ]
